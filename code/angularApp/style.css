@@ -1,0 +1,27 @@
+.app-Search {
+	padding: 10px 0;
+	border-bottom: 1px solid #ccc;
+}
+
+.app-SearchResults {
+	float: left;
+    border-right: 1px solid #ccc;
+    width: 10em;
+}
+.app-SearchResults ul {
+	list-style: none;
+	padding: 0;
+}
+.app-SearchResults ul li:hover {
+	cursor: pointer;
+	text-decoration: underline;
+	color: blue;
+}
+
+.app-SearchDetail {
+	padding-left: 12em;
+}
+.app-SearchDetail dl dt {
+	float: left;
+	width: 100px;
+}

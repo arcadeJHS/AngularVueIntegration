@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>ng-vue-integration</title>
+
+	<link href="angularApp/style.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+	<div id="angular-app-container" ng-app="AngularApp">
+		<header>
+			<search></search>
+		</header>
+		<main>
+			<search-results></search-results>
+			<search-detail section-title="Detail"></search-detail>
+			<!-- <div id="ger-vue-app"></div> -->
+		</main>
+	</div>
+
+	<script src="vendor/angular.min.js"></script>
+	<script src="angularApp/angularApp.js"></script>
+	<script src="angularApp/services/searchService.js"></script>
+	<script src="angularApp/components/search.js"></script>
+	<script src="angularApp/components/searchResults.js"></script>
+	<script src="angularApp/components/searchDetail.js"></script>
+</body>
+
+</html>

@@ -1,3 +1,7 @@
+**==> Work in progress, stay tuned! <==**
+----
+
+
 Migrating an Angular 1.x app to Vue
 =====================
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.   
@@ -19,6 +23,4 @@ Ideally you will migrate to Vue everything, but you cannot stop implementing new
 
 
 
-
 [1]: screenshots/01-simple_app.png
-

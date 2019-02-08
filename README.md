@@ -24,7 +24,7 @@ Maybe it could be helpful to someone else, or maybe someone will address me to a
 
 The Problem
 ----
-We've got a huge legacy app, five or six years worth of coding in Angular 1.x, whose layout here may be schematically represented as in this picture: 
+We've got a huge legacy app, five or six years worth of coding in Angular 1.x, whose layout may be schematically represented as in this picture: 
 
 ![simple-app][1]
 
@@ -38,7 +38,27 @@ Which, if we break it down into its constituents, mainly results composed of fiv
 4. A container to display the currently selected detail's info.
 5. A sub-component, inside the previous one, to display additional data.
 
-This is the state of our app in the tag **"Tag-01-angular-app"** of the associated repository.
+At this point our applications is simply organized according to the following structure:
+
+```
+code
+    |_angularApp
+    |   |_components
+    |   |   |_detail.js
+    |   |   |_innerDetail.js
+    |   |   |_search.js
+    |   |   |_searchResults.js
+    |   |_services
+    |   |   |_searchServices.js
+    |   |_angularApp.js
+    |   |_style.css
+    |_vendor
+    |   |_angular.min.js
+    |_index.html
+```
+
+No webpack, transpilation or other module bundling helpers.  
+See the codebase in the **"tag-01-angular-app"** tag of the associated repository.
 
 Ideally you will migrate everything to Vue, but you cannot stop implementing new features while rejuvenating. No chances to unplug the app today to plug it in a year from now completely renewed (it could be dangerous or really time consuming). You have to maintain the legacy code, allowing the beasts to communicate, and migrate it progressively, step by step, with a little patience, as the poet would say:
 
@@ -64,6 +84,7 @@ Requirements
 - **Vue components inside an Angular app**: bla, bla, bla...
 - **Angular components inside a Vue Component (doh!)**: well, I know, it sounds really strange (what? vue inside angular inside vue?), but better to reign in Hell than serve in Heaven, right? Well, kind of. 
 - **Vuex store, seamlessly shared between Angular and Vue**: bla, bla, bla...  
+
 
 
 [1]: screenshots/01-simple_app.png

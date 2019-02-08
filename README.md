@@ -2,8 +2,7 @@
 ----
 
 
-Migrating an Angular 1.x app to Vue
-=====================
+# Migrating an Angular 1.x app to Vue
 > Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
 
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.
@@ -26,7 +25,7 @@ Maybe it could be helpful to someone else, or maybe someone will address me to a
 
 The Problem
 ----
-We've got a huge legacy app, five or six years worth of coding in Angular 1.x, whose layout may be schematically represented as in this picture: 
+We've got a huge legacy single-page app, five or six years worth of coding in Angular 1.x, whose layout may be schematically represented as in this picture: 
 
 ![simple-app][1]
 
@@ -40,7 +39,7 @@ Which, if we break it down into its constituents, mainly results composed of fiv
 4. A container to display the currently selected detail's info.
 5. A sub-component, inside the previous one, to display additional data.
 
-At this point our applications is simply organized according to the following structure:
+At this point our applications is simply organized according to the following directory structure:
 
 ```
 code
@@ -94,11 +93,76 @@ Aka: vue inside angular inside vue (doh!). Wait a minute: what? I know, it sound
 3. **Vuex store, seamlessly shared between Angular and Vue.**   
 We will progressively introduce Vuex as the one source of truth to manage application state.
 
-4. **A module bundler.**   
+4. **vue-router**.  
+We would like to introduce client side routing, to facilitate view switching.
+
+5. **A module bundler.**   
 We will make use of ES6+ javascript and modules, a CSS preprocessor, and will bundle our transpiled code to include it in the existing application. Webpack at rescue here.
 
+
+So what?
+----
+A lot to do, so many things to understand, and to fit into each other.
+
+> "Me and my brother Vue here,  
+> We was hitchhikin' down a long and lonesome road.  
+> All of a sudden, there shined a shiny demon."
+
+[ngVue][4] enters here.
+
+> "ngVue is an Angular module that allows you to develop/use Vue components in AngularJS applications."
+
+Cool: I am a really bad swimmer, but at least a bridge exists. I can write a Vue component and include it into the existing Angular application. That's a good start.   
+Angular, Vue, ngVue (and Webpack). The Three Musketeers! 
+
+
+Enlightening the path
+----
+Alien teaches us that the best way to generate a new creature is incubating it from the inside.  
+To avoid side effects, I would like to preserve things as they are, as much as possible. I would like to isolate the source code I am going to add, and transpile it in a form I can use into the existing.   
+So i create a nest for Vue in the form of a new folder, let's call it "vueApp":
+
+```
+code
+    |_vueApp
+    |_angularApp
+    |_vendor
+    |_index.html
+```
+
+Ideally the "vueApp" folder will contain everything related to the migration: Vue code, Vue-Angular temporary hybrid code, Webpack and package.json configurations, node_modules, and the final "production ready dist" byproduct.  
+Furthermore, I want to keep Vue and hybrid code separated, to be able to delete no more useful Angular code in the future. For a similar reason, I create a "DEV" folder also, which contains mockups or everything useful to webpack-dev-server only. Adding a bunch of styles assets we then finally come to a developmnet ready directory structure, which, in the end, will be similar to the following:
+
+```
+code
+    |_vueApp
+        |_dist
+        |   |_css
+        |   |_js
+        |_node_modules
+        |_src
+        |   |_assets
+        |   |   |_styles
+        |   |_DEV
+        |   |_vueCode
+        |   |_ngVueBridgeCode
+        |   |_index.html
+        |   |_index.js
+        |_.babelrc
+        |_jest.conf.js
+        |_package.json
+        |_webpack.config.js
+    |_angularApp
+    |_vendor
+    |_index.html
+```
+
+> **Please note:** here I will not initialize the Vue app through vue-cli. I am reusing a Webpack custom configuration which suites my needs. Nevertheless, everything should work the same way if you are using vue-cli.
+
+See tag **"tag-02-app-directory-structure"** (with emtpy folders and files).
 
 
 [1]: screenshots/01-simple_app.png
 [2]: screenshots/02-app_components.png
 [3]: screenshots/03-ng_vue_components.png
+[4]: https://github.com/ngVue/ngVue

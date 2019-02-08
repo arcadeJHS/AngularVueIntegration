@@ -1,22 +1,20 @@
 (function () {
 	'use strict';
 
-	angular.module('AngularApp').component('searchDetail', {
+	angular.module('AngularApp').component('detail', {
 		template:
-			'<div class="app-SearchDetail" ng-if="$ctrl.store.currentDetail">' +
-			'	<h1>{{$ctrl.sectionTitle}}</h1>' +
+			'<div class="app-Detail" ng-if="$ctrl.store.currentDetail">' +
+			'	<h1>Detail</h1>' +
 			'	<dl>' +
 			'		<dt>Id:</dt>' +
 			'		<dd>{{$ctrl.store.currentDetail.id}}</dd>' +
 			'		<dt>Text:</dt>' +
-			'		<dd>{{$ctrl.store.currentDetail.text}}</dd>' +
+			'		<dd>{{$ctrl.store.currentDetail.name}}</dd>' +
 			'		<dt>Other Field:</dt>' +
-			'		<dd>{{$ctrl.store.currentDetail.field}}</dd>' +
+			'		<dd>{{$ctrl.store.currentDetail.value}}</dd>' +
 			'	</dl>' +
+			'	<inner-detail inner-data="$ctrl.store.currentDetail.more"></inner-detail>' +
 			'</div>',
-		bindings: {
-			sectionTitle: '@'
-		},
 		controller: ['searchService', function (searchService) {
 
 			angular.extend(this, {

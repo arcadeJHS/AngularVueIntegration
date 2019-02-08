@@ -1,27 +1,41 @@
+html {
+	padding: 0 2em;
+}
+h1, p {
+	margin: 0;
+}
+
 .app-Search {
-	padding: 10px 0;
+	padding: 1em 0;
 	border-bottom: 1px solid #ccc;
 }
 
 .app-SearchResults {
 	float: left;
     border-right: 1px solid #ccc;
-    width: 10em;
+	width: 12em;
 }
-.app-SearchResults ul {
+.app-SearchResults .app-SearchResults__list {
+	padding-top: 1em;
+}
+.app-SearchResults .app-SearchResults__list ul {
 	list-style: none;
 	padding: 0;
 }
-.app-SearchResults ul li:hover {
+.app-SearchResults .app-SearchResults__list ul li:hover {
 	cursor: pointer;
 	text-decoration: underline;
 	color: blue;
 }
 
-.app-SearchDetail {
-	padding-left: 12em;
+.app-Detail {
+	padding: 1em 1em 1em 14em;
 }
-.app-SearchDetail dl dt {
+.app-Detail dl dt {
 	float: left;
 	width: 100px;
+}
+
+.app-InnerDetail {
+	margin-top: 2em;
 }

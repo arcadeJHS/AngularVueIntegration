@@ -14,9 +14,9 @@
 			return $timeout(function () {
 				// mock data
 				return [
-					{ id: 1, text: 'Result One', field: 'Field value for result 1' },
-					{ id: 2, text: 'Result Two', field: 'Field value for result 2' },
-					{ id: 3, text: 'Result Three', field: 'Field value for result 3' }
+					{ id: 1, name: 'Result One', value: "We're all mad here. I'm mad. You're mad.", more: "What do you hear? Nothin' but the rain, sir. Grab your gun and bring the cat in." },
+					{ id: 2, name: 'Result Two', value: 'Are you Alive? Yes. Prove it.', more: "Sometimes I've believed as many as six impossible things before breakfast." },
+					{ id: 3, name: 'Result Three', value: 'Do you have any idea why a raven is like a writing desk?', more: "She’s right, Gaius. The end times are approaching. Humanity’s final chapters are about to be written. And you - you will be its author." }
 				];
 			}, 2000);
 		}

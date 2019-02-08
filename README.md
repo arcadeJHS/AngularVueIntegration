@@ -11,6 +11,8 @@ In the meantime, as Darwin would say (the man, not the OS), javascript species e
 Reasons can vary: Angular 1.x will no longer be supported soon; you can indeed write a better javascript today; your application can improve in performance and maintainability... you name it.   
 So no choiches here, actually, winter's coming: time to migrate.
 
+> Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
+
 
 Disclaimer
 ----
@@ -62,9 +64,9 @@ See the codebase in the **"tag-01-angular-app"** tag of the associated repositor
 
 Ideally you will migrate everything to Vue, but you cannot stop implementing new features while rejuvenating. No chances to unplug the app today to plug it in a year from now completely renewed (it could be dangerous or really time consuming). You have to maintain the legacy code, allowing the beasts to communicate, and migrate it progressively, step by step, with a little patience, as the poet would say:
 
-"Said, woman, take it slow  
-It'll work itself out fine  
-All we need is just a little patience."
+> "Said, woman, take it slow  
+> It'll work itself out fine  
+> ll we need is just a little patience."
 
 In the end, for reasons I will not expose here (related to an old architecture and refactoring decisions), what we are going to do, at least as a firs step, could be summarized as:
 
@@ -81,9 +83,19 @@ I know what you are thinking. But it happens. And here the fun begins.
 
 Requirements
 ----
-- **Vue components inside an Angular app**: bla, bla, bla...
-- **Angular components inside a Vue Component (doh!)**: well, I know, it sounds really strange (what? vue inside angular inside vue?), but better to reign in Hell than serve in Heaven, right? Well, kind of. 
-- **Vuex store, seamlessly shared between Angular and Vue**: bla, bla, bla...  
+We can hence list the main guidelines which will direct the migration:
+
+1. **Support for Vue components inside an Angular app.**   
+Aka: Vue components inside Angular components. This gives us the ability to replace Angular bricks with Vue bricks, avoiding our building to collapse.
+
+2. **Support for Angular components inside Vue Components.**  
+Aka: vue inside angular inside vue (doh!). Wait a minute: what? I know, it sounds really strange, but better to reign in Hell than serve in Heaven, right? Well, kind of. As we stated above, we still need to maintain something Angular inside the new Vue codebase. Simply no options here.
+
+3. **Vuex store, seamlessly shared between Angular and Vue.**   
+We will progressively introduce Vuex as the one source of truth to manage application state.
+
+4. **A module bundler.**   
+We will make use of ES6+ javascript and modules, a CSS preprocessor, and will bundle our transpiled code to include it in the existing application. Webpack at rescue here.
 
 
 

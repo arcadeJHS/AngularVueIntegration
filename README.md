@@ -4,14 +4,14 @@
 
 Migrating an Angular 1.x app to Vue
 =====================
+> Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
+
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.
 
 Chances are that you are quietly writing code to grow up and fix your shiny-happy-die-hard-godzilla app in Angular 1.x, day by day (with a certain amount of satisfaction, why not?).  
 In the meantime, as Darwin would say (the man, not the OS), javascript species evolve over time. And, not so surprisingly, you wake up one day to discover that you and your creature are slowly fading to black ("I cannot stand this hell I feel..." you know).  
 Reasons can vary: Angular 1.x will no longer be supported soon; you can indeed write a better javascript today; your application can improve in performance and maintainability... you name it.   
 So no choiches here, actually, winter's coming: time to migrate.
-
-> Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
 
 
 Disclaimer
@@ -78,7 +78,7 @@ What I am stating is that from an app completely written in Angular 1.x we are m
 
 ![ng-vue-components][3]
 
-I know what you are thinking. But it happens. And here the fun begins.
+I know what you are thinking. But it happens. And (if you are like me) here the fun begins!
 
 
 Requirements

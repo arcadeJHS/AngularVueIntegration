@@ -102,7 +102,7 @@ We will make use of ES6+ javascript and modules, a CSS preprocessor, and will bu
 
 So what?
 ----
-A lot to do, so many things to understand, and to fit into each other.
+A lot to do, so many things to understand and to fit into each other.
 
 > "Me and my brother Vue here,  
 > We was hitchhikin' down a long and lonesome road.  
@@ -118,7 +118,7 @@ Angular, Vue, ngVue (and Webpack). The Three Musketeers!
 
 Enlightening the path
 ----
-Alien teaches us that the best way to generate a new creature is incubating it from the inside.  
+The Alien movie teaches us that the best way to generate a new creature is incubating it from the inside.  
 To avoid side effects, I would like to preserve things as they are, as much as possible. I would like to isolate the source code I am going to add, and transpile it in a form I can use into the existing.   
 So i create a nest for Vue in the form of a new folder, let's call it "vueApp":
 
@@ -136,22 +136,22 @@ Furthermore, I want to keep Vue and hybrid code separated, to be able to delete 
 ```
 code
     |_vueApp
-        |_dist
-        |   |_css
-        |   |_js
-        |_node_modules
-        |_src
-        |   |_assets
-        |   |   |_styles
-        |   |_DEV
-        |   |_vueCode
-        |   |_ngVueBridgeCode
-        |   |_index.html
-        |   |_index.js
-        |_.babelrc
-        |_jest.conf.js
-        |_package.json
-        |_webpack.config.js
+    |   |_dist
+    |   |   |_css
+    |   |   |_js
+    |   |_node_modules
+    |   |_src
+    |   |   |_assets
+    |   |   |   |_styles
+    |   |   |_DEV
+    |   |   |_vueCode
+    |   |   |_ngVueBridgeCode
+    |   |   |_index.html
+    |   |   |_index.js
+    |   |_.babelrc
+    |   |_jest.conf.js
+    |   |_package.json
+    |   |_webpack.config.js
     |_angularApp
     |_vendor
     |_index.html
@@ -162,7 +162,113 @@ code
 See tag **"tag-02-app-directory-structure"** (with emtpy folders and files).
 
 
+First things first
+----
+Let's start by "emulating" an Angular app to re-create an environment to make quick development iterations before injecting the code into the real app. For sure, this is a contrived example which delineates the way I dealt with my problem: as stated above, in the original Angular app I have got no support from Webpack (or other module bundlers), and ideally I do not want to modify in any way the existing codebase.   
+By bootstrapping a dev environment with modern tools I can instead quickly write and test new Vue code and Angular-Vue interactions through webpack-dev-server.
+Please refer to **"tag-03-bootstrapping-vue-app"** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
+
+### Webpack config
+A few points to note in the webpack.config.js file.
+
+**Dev and "library" mode**   
+``` javascript
+const buildAsALibrary = (env === 'production');
+
+...
+
+entryFile: buildAsALibrary ? 'index.js' : 'DEV/dev.index.js'
+
+...
+
+if (buildAsALibrary === false) {
+	config.plugins.push(new HtmlWebpackPlugin({
+		template: path.join(__dirname, settings.paths.source, 'index.html'),
+		filename: path.join(__dirname, settings.paths.build, 'index.html'),
+		inject: true,
+		minify: minify ? {
+			removeComments: true,
+			collapseWhitespace: true,
+			removeAttributeQuotes: true
+		} : false
+	}));
+}
+```
+We will initially build our components inside the "DEV" folder, taking advantage of our testing environment. During development hence, the main entry file will be "DEV/dev.index.js", and the generated javascript will be injected into "index.html" page.   
+When will switch to the real production build, we will build the codebase as a javascript bundle to include in the existing Angular app, exactly as we would include a new library, and the main entrypoint will then be "index.js".
+
+**The production build**
+``` javascript
+const settings = {
+    paths: {
+        source: './src'
+    },
+    entryFile: buildAsALibrary ? 'index.js' : 'DEV/dev.index.js'
+};
+
+... 
+
+entry: {
+    appVueLib: path.join(__dirname, settings.paths.source, settings.entryFile)
+} 
+
+...
+
+optimization: {
+    splitChunks: {
+        chunks: 'all',
+        maxInitialRequests: Infinity,
+        minSize: 0,
+        cacheGroups: {
+            vendor: {
+                test: /[\\/]node_modules[\\/]/,
+                name: 'appVueLib_VendorsDependencies'
+            },
+            ngVueBridge: {
+                test: /[\\/]src\/ngVueBridgeCode[\\/]/,
+                name: 'appVueLib_NgVueBridge'
+            },
+        }
+    }
+}
+```
+Here we are in essence telling Webpack to generate three files in the final build:
+- **appVueLib_VendorsDependencies.js**: a file to include all vendors dependencies (like, Angular, Vue...).
+- **appVueLib_NgVueBridge.js**: a bundle which contains the "hybrid" code required to temporary integrate Angular and Vue. Virtually, once the migration is complete, this code could be completely removed, and the generated file simply will exist no more. We will work on this folder later.
+- **appVueLib.js**: the "real porting", the new code completely written in Vue. 
+
+Those are the files we will include into the existing old Angular app.
+
+**Angular as a global object**
+``` javascript
+if (env === 'production') {
+    config.externals = {
+        angular: 'angular'
+    };
+}
+``` 
+The old app already depends on Angular, which is included as an old script tag.  
+Hence, to allow the new bundles to access things defined by other javascript on the page, avoid duplication in the build process, and duplication warnings at runtime, we take advantage of [Webpack externals][5]. The "angular" dependency will be present in the consumer's environment.   
+Again, we will make use of it later on.
+
+
+
+
+
+Go into vueApp and launch
+```
+npm install
+```
+
+
+Enters ngVue
+----
+Let's now include the ngVue module.
+
+
+
 [1]: screenshots/01-simple_app.png
 [2]: screenshots/02-app_components.png
 [3]: screenshots/03-ng_vue_components.png
 [4]: https://github.com/ngVue/ngVue
+[5]: https://webpack.js.org/configuration/externals/

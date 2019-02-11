@@ -1,0 +1,30 @@
+{
+	"presets": [
+		[
+			"@babel/preset-env",
+			{
+				"modules": false,
+				"useBuiltIns": "entry",
+				"targets": {
+					"browsers": [
+						"> 0.25%",
+						"not dead",
+						"ie >= 10"
+					]
+				}
+			}
+		]
+	],
+	"plugins": [
+		"@babel/plugin-syntax-dynamic-import",
+		"angularjs-annotate"
+	],
+	"env": {
+		"test": {
+			"presets": [
+				"@babel/preset-env"
+			],
+			"sourceMaps": "inline"
+		}
+	}
+}

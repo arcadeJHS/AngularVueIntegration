@@ -304,7 +304,7 @@ whose template is so simple as:
 ```
 
 And let's use it into our development Angular app:  
- 
+
 **DEV/dev.index.js**
 ```javascript
 // a bunch of useful imports
@@ -335,9 +335,7 @@ Nice! A simple Angular app on which experiment with our migration.
 Again, refer to the **"tag-03-bootstrapping-vue-app"** for everything done so far.
 
 
-Enters ngVue
-----
-Let's now include the ngVue module.
+
 
 
 

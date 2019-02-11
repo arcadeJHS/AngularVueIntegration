@@ -504,6 +504,31 @@ Et voilà, it simply works:
 
 As a reference, see **`tag-04-vue-component-inside-real-app`**.
 
+If you are curious, yes, you can also passa props:
+
+**code/index.html**
+```html
+<vue-app-container some-param="'Hello from Angular parent!'"></vue-app-container>
+```
+
+**code/vueApp/src/vueCode/components/VueAppContainer.vue**
+```javascript
+<template>
+    <div class="vue-app-container">
+        <nav>Navigation Container</nav>
+        <main>Main Container</main>
+        <span>{{someParam}}</span>
+    </div>
+</template>
+
+<script>
+export default {
+    name: 'VueAppContainer',
+    props: ['someParam']
+};
+</script>
+```
+
 
 
 [1]: screenshots/01-simple_app.png

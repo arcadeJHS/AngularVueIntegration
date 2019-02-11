@@ -2,12 +2,14 @@
 	<div class="vue-app-container">
 		<nav>Navigation Container</nav>
 		<main>Main Container</main>
+		<span>{{someParam}}</span>
 	</div>
 </template>
 
 <script>
 export default {
-	name: 'VueAppContainer'
+	name: 'VueAppContainer',
+	props: ['someParam']
 };
 </script>
 

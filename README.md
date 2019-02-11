@@ -504,7 +504,7 @@ Et voilà, it simply works:
 
 As a reference, see **`tag-04-vue-component-inside-real-app`**.
 
-If you are curious, yes, you can also passa props:
+If you are curious, yes, you can also pass props:
 
 **code/index.html**
 ```html

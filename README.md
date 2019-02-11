@@ -356,7 +356,7 @@ Ok, time to create our first Vue component.
 Let's define a component for a simple app navigation. Note I am using the `vueCode` folder here, because I am writing a fresh component completely in Vue, to replace existing Angular code. Contrarily to `DEV` and `ngVueBridgeCode` folders, which will be eventually deleted, the `vueCode` one contains the real final migration.
 
 **vueCode/components/VueAppContainer.vue**
-```javascript
+```html
 <template>
 	<div class="vue-app-container">
 		<nav>Navigation Container</nav>
@@ -512,7 +512,7 @@ If you are curious, yes, you can also pass props:
 ```
 
 **code/vueApp/src/vueCode/components/VueAppContainer.vue**
-```javascript
+```html
 <template>
     <div class="vue-app-container">
         <nav>Navigation Container</nav>

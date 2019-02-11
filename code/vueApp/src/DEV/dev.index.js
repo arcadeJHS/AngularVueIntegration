@@ -2,12 +2,14 @@ import '@babel/polyfill';
 
 import '@/assets/styles/index.scss';
 import angular from 'angular';
-import AngularAppWrapper from './angularAppWrapper/index.js';
+import AngularAppContainer from './angularAppContainer';
+import '@/ngVueBridgeCode/ngVueDirectives';
+import ngVueComponentsModule from '@/ngVueBridgeCode/ngVueComponentsModule';
 
-angular.module('ngVueApp', []);
-angular.module('ngVueApp').component('angularAppWrapper', AngularAppWrapper);
+angular.module('ngVueApp', [ngVueComponentsModule.name]);
+angular.module('ngVueApp').component('angularAppContainer', AngularAppContainer);
 
 const wrapperEl = document.querySelector('#ng-vue-app');
-wrapperEl.insertAdjacentHTML('afterbegin', '<angular-app-wrapper></angular-app-wrapper>');
+wrapperEl.insertAdjacentHTML('afterbegin', '<angular-app-container></angular-app-container>');
 
 angular.bootstrap(wrapperEl, ['ngVueApp'], { strictDi: true });

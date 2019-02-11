@@ -1,6 +1,6 @@
 (function (app) {
 	'use strict';
 
-	angular.module('AngularApp', [/* 'ngVueComponents' */]);
+	angular.module('AngularApp', ['ngVueComponents']);
 
 })();

@@ -59,7 +59,7 @@ code
 ```
 
 No webpack, transpilation or other module bundling helpers.  
-See the codebase in the **"tag-01-angular-app"** tag of the associated repository.
+See the codebase in the **`tag-01-angular-app`** tag of the associated repository.
 
 Ideally you will migrate everything to Vue, but you cannot stop implementing new features while rejuvenating. No chances to unplug the app today to plug it in a year from now completely renewed (it could be dangerous or really time consuming). You have to maintain the legacy code, allowing the beasts to communicate, and migrate it progressively, step by step, with a little patience, as the poet would say:
 
@@ -335,7 +335,174 @@ Nice! A simple Angular app on which experiment with our migration.
 Again, refer to the **"tag-03-bootstrapping-dev-angular-app"** for everything done so far.
 
 
+Enters ngVue
+----
+Let's now create and use our first Vue-inside-Angular component. To do that we will ask for help to ngVue (refer to the [official ngVue documentation][4] for more info).   
+I will begin by defining a new Angular module to contain everything related to ngVue.
 
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+import angular from 'angular';
+import 'ngVue';
+import 'ngVue/build/plugins.js';
+
+const ngVueComponentsModule = angular.module('ngVueComponents', ['ngVue', 'ngVue.plugins']);
+
+export default ngVueComponentsModule;
+```
+We are simply creating a new Angular module, using, as dependencies, 'ngVue' and 'ngVue.plugins' (we will use [ngVue plugins][7] later, with vuex, for instance). Basically, this will be the namespace to contain "angularized" Vue code.  
+Ok, time to create our first Vue component.
+
+Let's define a component for a simple app navigation. Note I am using the "vueCode" folder here, because I am writing a fresh component completely in Vue, to replace existing Angular code. Contrarily to "DEV" and "ngVueBridgeCode" folders, which will be eventually deleted, the "vueCode" one contains the real final migration.
+
+**vueCode/components/VueAppContainer.vue**
+```javascript
+<template>
+	<div class="vue-app-container">
+		<nav>Navigation Container</nav>
+		<main>Main Container</main>
+	</div>
+</template>
+
+<script>
+export default {
+	name: 'VueAppContainer'
+};
+</script>
+```
+
+Now, if you simply include this new Vue component inside the AngularAppContainer it will be ignored.
+
+**DEV/AngularAppContainer/index.html**
+```html
+<div class="angular-app-container">
+	{{$ctrl.internalString}}
+
+	<vue-app-container></vue-app-container>
+</div>
+```
+
+You have to tell Angular to render this component through ngVue.   
+Let's create a file to "transform" Vue component into Angular ones. With, `ngVueDirectives.js` we are telling Angular, through ngVue, that our Vue components exist. Again, "ngVueDirectives.js" is only a temporary bridge file, so we will put it inside "ngVueBridgeCode" folder.
+
+**ngVueBridgeCode/ngVueDirectives.js**
+```javascript
+import Vue from 'vue';
+import ngVueComponentsModule from '@/ngVueBridgeCode/ngVueComponentsModule';
+import VueAppContainer from '@/vueCode/components/VueAppContainer';
+
+ngVueComponentsModule.directive('vueAppContainer',
+	/** @ngInject */
+	createVueComponent => createVueComponent(Vue.component('vueAppContainer', VueAppContainer))
+);
+```
+
+We are using ngVue's `createVueComponent` factory to translate a Vue component into an Angular directive.
+
+As a first step, we inform the main angular module of the existence of our angularized-vue-components, so inside "dev.index.js" replace
+
+```javascript
+angular.module('ngVueApp', []);
+```
+
+with
+
+```javascript
+import '@/ngVueBridgeCode/ngVueDirectives';
+import ngVueComponentsModule from '@/ngVueBridgeCode/ngVueComponentsModule';
+
+angular.module('ngVueApp', [ngVueComponentsModule.name]);
+```
+
+et voilà: your first Vue component inside Angular!
+
+![vue-component-inside-angular][8]
+
+Basically, we have just fulfilled requirements 1 and 5: we can write new components in Vue, include them into the existing Angular application, and use modern development and bundling tools.   
+
+
+Back to the real
+----
+> "Where we're going, we don't need roads."
+
+But, to say it all, we have to leave our safe development environment, take off, and use the new component inside the real application.   
+
+Add to `index.js` the dependecies required:
+
+**vueApp/src/index.js**
+```javascript
+import '@babel/polyfill';
+import '@/assets/styles/index.scss';
+import '@/ngVueBridgeCode/ngVueDirectives';
+import ngVueComponentsModule from '@/ngVueBridgeCode/ngVueComponentsModule';
+```
+
+go to your terminal and run
+```
+npm run build
+```
+
+What you get is a `vueApp/dist` folder which contains the following files:
+```
+dist
+    |_css
+    |   |_appVueLib.css
+    |_js
+        |_appVueLib_NgVueBridge.js
+        |_appVueLib_VendorsDependencies.js
+        |_appVueLib.js
+```
+
+This is exactly the "lib" we were looking for to enhance our existing Angular application.   
+In the main `index.html`, include those files and use the new Angular directive:
+
+**code/index.html**
+```html
+<body>
+    <div id="angular-app-container" ng-app="AngularApp">
+        <header>
+            <search></search>
+        </header>
+        <main>
+            <search-results></search-results>
+            <detail></detail>
+
+            <!-- ngVue components -->
+            <vue-app-container></vue-app-container>
+        </main>
+    </div>
+
+    <script src="vendor/angular.min.js"></script>
+    <script src="angularApp/angularApp.js"></script>
+    <script src="angularApp/services/searchService.js"></script>
+    <script src="angularApp/components/search.js"></script>
+    <script src="angularApp/components/searchResults.js"></script>
+    <script src="angularApp/components/innerDetail.js"></script>
+    <script src="angularApp/components/detail.js"></script>
+
+    <!-- ngVue components -->
+    <link href="vueApp/dist/css/appVueLib.css" rel="stylesheet" type="text/css">
+    <script src="vueApp/dist/js/appVueLib_VendorsDependencies.js"></script>
+    <script src="vueApp/dist/js/appVueLib_NgVueBridge.js"></script>
+    <script src="vueApp/dist/js/appVueLib.js"></script>
+</body>
+```
+
+And do not forget to inform Angular a new module for Vue components exists:
+
+**code/angularApp/angularApp.js**
+```javascript
+(function (app) {
+    'use strict';
+    angular.module('AngularApp', ['ngVueComponents']);
+})();
+```
+
+Et voilà, it simply works:
+
+![vue-component-inside-real-app][9]
+
+As a reference, see **"tag-04-vue-component-inside-real-app"**.
 
 
 
@@ -345,3 +512,6 @@ Again, refer to the **"tag-03-bootstrapping-dev-angular-app"** for everything do
 [4]: https://github.com/ngVue/ngVue
 [5]: https://webpack.js.org/configuration/externals/
 [6]: https://github.com/schmod/babel-plugin-angularjs-annotate
+[7]: https://github.com/ngVue/ngVue/blob/master/docs/plugins.md
+[8]: screenshots/04-vue_component_inside_angular.png
+[9]: screenshots/05-vue_component_inside_real_app.png

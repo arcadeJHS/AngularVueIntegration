@@ -169,10 +169,11 @@ By bootstrapping a dev environment with modern tools I can instead quickly write
 Please refer to **"tag-03-bootstrapping-vue-app"** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
 
 ### Webpack config
-A few points to note in the webpack.config.js file.
+Before we start, a few points to note.   
+Let's begin with webpack.config.js file.
 
-**Dev and "library" mode**   
-``` javascript
+#### Dev and "library" mode 
+```javascript
 const buildAsALibrary = (env === 'production');
 
 ...
@@ -182,23 +183,23 @@ entryFile: buildAsALibrary ? 'index.js' : 'DEV/dev.index.js'
 ...
 
 if (buildAsALibrary === false) {
-	config.plugins.push(new HtmlWebpackPlugin({
-		template: path.join(__dirname, settings.paths.source, 'index.html'),
-		filename: path.join(__dirname, settings.paths.build, 'index.html'),
-		inject: true,
-		minify: minify ? {
-			removeComments: true,
-			collapseWhitespace: true,
-			removeAttributeQuotes: true
-		} : false
-	}));
+    config.plugins.push(new HtmlWebpackPlugin({
+        template: path.join(__dirname, settings.paths.source, 'index.html'),
+        filename: path.join(__dirname, settings.paths.build, 'index.html'),
+        inject: true,
+        minify: minify ? {
+            removeComments: true,
+            collapseWhitespace: true,
+            removeAttributeQuotes: true
+        } : false
+    }));
 }
 ```
 We will initially build our components inside the "DEV" folder, taking advantage of our testing environment. During development hence, the main entry file will be "DEV/dev.index.js", and the generated javascript will be injected into "index.html" page.   
 When will switch to the real production build, we will build the codebase as a javascript bundle to include in the existing Angular app, exactly as we would include a new library, and the main entrypoint will then be "index.js".
 
-**The production build**
-``` javascript
+#### The production build
+```javascript
 const settings = {
     paths: {
         source: './src'
@@ -239,8 +240,8 @@ Here we are in essence telling Webpack to generate three files in the final buil
 
 Those are the files we will include into the existing old Angular app.
 
-**Angular as a global object**
-``` javascript
+#### Angular as a global object
+```javascript
 if (env === 'production') {
     config.externals = {
         angular: 'angular'
@@ -251,19 +252,89 @@ The old app already depends on Angular, which is included as an old script tag.
 Hence, to allow the new bundles to access things defined by other javascript on the page, avoid duplication in the build process, and duplication warnings at runtime, we take advantage of [Webpack externals][5]. The "angular" dependency will be present in the consumer's environment.   
 Again, we will make use of it later on.
 
+### package.json
+In the package.json are listed all the NPM dependencies we will use now and later (like ngVue or vuex).   
+The only thing to note here I will use ES6 to write angular code, so I will take advantage of the [babel-plugin-angularjs-annotate][6] to solve dependency injection. In ES6 code you will find the "/** @ngInject */" decorator.
+From you terminal, go to the vueApp folder and run install:
 
-
-
-
-Go into vueApp and launch
 ```
+cd code/vueApp/
+
 npm install
 ```
 
 
-Enters ngVue
+A new beginning
 ----
-Let's now include the ngVue module.
+All the pieces are now in place to begin the real work. Let's start from the "DEV" folder.  
+Create an "AngularAppWrapper" to host our fake Angular app. At the end this will be the structure of the "DEV" folder:
+
+```
+DEV
+    |_AngularAppWrapper
+    |   |_index.html
+    |   |_index.js
+    |_dev.index.js
+```
+
+We will use ES6 to write the angular component (ES6 syntax could also facilitate a porting from old angular codebase to a complete rewriting in Vue):
+
+**DEV/AngularAppWrapper/index.js**
+```javascript
+import template from './index.html';
+
+export default {
+    template: template,
+    controller: class AngularAppWrapperController {
+        /** @ngInject */
+        constructor() {
+            this.internalString = '';
+        }
+
+        $onInit() {
+            this.internalString = 'Angular App Container Ready!';
+        }
+    }
+};
+```
+
+whose template is so simple as:
+```html
+<div class="angular-app-container">{{$ctrl.internalString}}</div>
+```
+
+**DEV/dev.index.js**
+And let's use it into our development Angular app:
+```javascript
+// a bunch of useful imports
+import '@babel/polyfill';
+import '@/assets/styles/index.scss';
+import angular from 'angular';
+// import the wrapper component created above
+import AngularAppWrapper from './angularAppWrapper/index.js';
+
+// init an Angular app
+angular.module('ngVueApp', []);
+// set AngularAppWrapper as an Angular component
+angular.module('ngVueApp').component('angularAppWrapper', AngularAppWrapper);
+
+// set app template
+const wrapperEl = document.querySelector('#ng-vue-app');
+wrapperEl.insertAdjacentHTML('afterbegin', '<angular-app-wrapper></angular-app-wrapper>');
+
+// manually bootstrap Angular app
+angular.bootstrap(wrapperEl, ['ngVueApp'], { strictDi: true });
+```
+
+Now from you terminal launch  
+```
+npm run dev
+```
+Nice! A simple Angular app on which experiment with our migration.    
+Again, refer to the **"tag-03-bootstrapping-vue-app"** for everything done so far.
+
+
+
 
 
 
@@ -272,3 +343,4 @@ Let's now include the ngVue module.
 [3]: screenshots/03-ng_vue_components.png
 [4]: https://github.com/ngVue/ngVue
 [5]: https://webpack.js.org/configuration/externals/
+[6]: https://github.com/schmod/babel-plugin-angularjs-annotate

@@ -529,6 +529,8 @@ export default {
 </script>
 ```
 
+> "You still don't understand what you're dealing with, do you? Perfect organism. Its structural perfection is matched only by its hostility."
+
 
 
 [1]: screenshots/01-simple_app.png

@@ -303,8 +303,8 @@ whose template is so simple as:
 <div class="angular-app-container">{{$ctrl.internalString}}</div>
 ```
 
+And let's use it into our development Angular app:   
 **DEV/dev.index.js**
-And let's use it into our development Angular app:
 ```javascript
 // a bunch of useful imports
 import '@babel/polyfill';
@@ -334,7 +334,9 @@ Nice! A simple Angular app on which experiment with our migration.
 Again, refer to the **"tag-03-bootstrapping-vue-app"** for everything done so far.
 
 
-
+Enters ngVue
+----
+Let's now include the ngVue module.
 
 
 

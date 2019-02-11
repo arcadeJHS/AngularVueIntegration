@@ -504,8 +504,6 @@ Et voilà, it simply works:
 
 As a reference, see **`tag-04-vue-component-inside-real-app`**.
 
-TEST
-
 
 
 [1]: screenshots/01-simple_app.png

@@ -120,7 +120,7 @@ Enlightening the path
 ----
 The Alien movie teaches us that the best way to generate a new creature is incubating it from the inside.  
 To avoid side effects, I would like to preserve things as they are, as much as possible. I would like to isolate the source code I am going to add, and transpile it in a form I can use into the existing.   
-So i create a nest for Vue in the form of a new folder, let's call it "vueApp":
+So i create a nest for Vue in the form of a new folder, let's call it `vueApp`:
 
 ```
 code
@@ -130,8 +130,8 @@ code
     |_index.html
 ```
 
-Ideally the "vueApp" folder will contain everything related to the migration: Vue code, Vue-Angular temporary hybrid code, Webpack and package.json configurations, node_modules, and the final "production ready dist" byproduct.  
-Furthermore, I want to keep Vue and hybrid code separated, to be able to delete no more useful Angular code in the future. For a similar reason, I create a "DEV" folder also, which contains mockups or everything useful to webpack-dev-server only. Adding a bunch of styles assets we then finally come to a developmnet ready directory structure, which, in the end, will be similar to the following:
+Ideally the `vueApp` folder will contain everything related to the migration: Vue code, Vue-Angular temporary hybrid code, Webpack and package.json configurations, node_modules, and the final "production ready dist" byproduct.  
+Furthermore, I want to keep Vue and hybrid code separated, to be able to delete no more useful Angular code in the future. For a similar reason, I create a `DEV` folder also, which contains mockups or everything useful to webpack-dev-server only. Adding a bunch of styles assets we then finally come to a developmnet ready directory structure, which, in the end, will be similar to the following:
 
 ```
 code
@@ -159,14 +159,14 @@ code
 
 > **Please note:** here I will not initialize the Vue app through vue-cli. I am reusing a Webpack custom configuration which suites my needs. Nevertheless, everything should work the same way if you are using vue-cli.
 
-See tag **"tag-02-app-directory-structure"** (with emtpy folders and files).
+See tag **`tag-02-app-directory-structure`** (with emtpy folders and files).
 
 
 First things first
 ----
 Let's start by "emulating" an Angular app to re-create an environment to make quick development iterations before injecting the code into the real app. For sure, this is a contrived example which delineates the way I dealt with my problem: as stated above, in the original Angular app I have got no support from Webpack (or other module bundlers), and ideally I do not want to modify in any way the existing codebase.   
 By bootstrapping a dev environment with modern tools I can instead quickly write and test new Vue code and Angular-Vue interactions through webpack-dev-server.
-Please refer to **"tag-03-bootstrapping-dev-angular-app"** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
+Please refer to **`tag-03-bootstrapping-dev-angular-app`** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
 
 ### Webpack config
 Before we start, a few points to note.   
@@ -195,8 +195,8 @@ if (buildAsALibrary === false) {
     }));
 }
 ```
-We will initially build our components inside the "DEV" folder, taking advantage of our testing environment. During development hence, the main entry file will be "DEV/dev.index.js", and the generated javascript will be injected into "index.html" page.   
-When will switch to the real production build, we will build the codebase as a javascript bundle to include in the existing Angular app, exactly as we would include a new library, and the main entrypoint will then be "index.js".
+We will initially build our components inside the `DEV` folder, taking advantage of our testing environment. During development hence, the main entry file will be `DEV/dev.index.js`, and the generated javascript will be injected into `index.html` page.   
+When will switch to the real production build, we will build the codebase as a javascript bundle to include in the existing Angular app, exactly as we would include a new library, and the main entrypoint will then be `index.js`.
 
 #### The production build
 ```javascript
@@ -249,12 +249,12 @@ if (env === 'production') {
 }
 ``` 
 The old app already depends on Angular, which is included as an old script tag.  
-Hence, to allow the new bundles to access things defined by other javascript on the page, avoid duplication in the build process, and duplication warnings at runtime, we take advantage of [Webpack externals][5]. The "angular" dependency will be present in the consumer's environment.   
+Hence, to allow the new bundles to access things defined by other javascript on the page, avoid duplication in the build process, and duplication warnings at runtime, we take advantage of [Webpack externals][5]. The `angular` dependency will be present in the consumer's environment.   
 Again, we will make use of it later on.
 
 ### package.json
 In the package.json are listed all the NPM dependencies we will use now and later (like ngVue or vuex).   
-The only thing to note here I will use ES6 to write angular code, so I will take advantage of the [babel-plugin-angularjs-annotate][6] to solve dependency injection. In ES6 code you will find the "/** @ngInject */" decorator.
+The only thing to note here I will use ES6 to write angular code, so I will take advantage of the [babel-plugin-angularjs-annotate][6] to solve dependency injection. In ES6 code you will find the `/** @ngInject */` decorator.
 From you terminal, go to the vueApp folder and run install:
 
 ```
@@ -266,8 +266,8 @@ npm install
 
 A new beginning
 ----
-All the pieces are now in place to begin the real work. Let's start from the "DEV" folder.  
-Create an "AngularAppWrapper" to host our fake Angular app. At the end this will be the structure of the "DEV" folder:
+All the pieces are now in place to begin the real work. Let's start from the `DEV` folder.  
+Create an `AngularAppWrapper` to host our fake Angular app. At the end this will be the structure of the `DEV` folder:
 
 ```
 DEV
@@ -332,7 +332,7 @@ Now from you terminal launch
 npm run dev
 ```
 Nice! A simple Angular app on which experiment with our migration.    
-Again, refer to the **"tag-03-bootstrapping-dev-angular-app"** for everything done so far.
+Again, refer to the **`tag-03-bootstrapping-dev-angular-app`** for everything done so far.
 
 
 Enters ngVue
@@ -353,7 +353,7 @@ export default ngVueComponentsModule;
 We are simply creating a new Angular module, using, as dependencies, 'ngVue' and 'ngVue.plugins' (we will use [ngVue plugins][7] later, with vuex, for instance). Basically, this will be the namespace to contain "angularized" Vue code.  
 Ok, time to create our first Vue component.
 
-Let's define a component for a simple app navigation. Note I am using the "vueCode" folder here, because I am writing a fresh component completely in Vue, to replace existing Angular code. Contrarily to "DEV" and "ngVueBridgeCode" folders, which will be eventually deleted, the "vueCode" one contains the real final migration.
+Let's define a component for a simple app navigation. Note I am using the `vueCode` folder here, because I am writing a fresh component completely in Vue, to replace existing Angular code. Contrarily to `DEV` and `ngVueBridgeCode` folders, which will be eventually deleted, the `vueCode` one contains the real final migration.
 
 **vueCode/components/VueAppContainer.vue**
 ```javascript
@@ -383,7 +383,7 @@ Now, if you simply include this new Vue component inside the AngularAppContainer
 ```
 
 You have to tell Angular to render this component through ngVue.   
-Let's create a file to "transform" Vue component into Angular ones. With, `ngVueDirectives.js` we are telling Angular, through ngVue, that our Vue components exist. Again, "ngVueDirectives.js" is only a temporary bridge file, so we will put it inside "ngVueBridgeCode" folder.
+Let's create a file to "transform" Vue component into Angular ones. With, `ngVueDirectives.js` we are telling Angular, through ngVue, that our Vue components exist. Again, `ngVueDirectives.js` is only a temporary bridge file, so we will put it inside `ngVueBridgeCode` folder.
 
 **ngVueBridgeCode/ngVueDirectives.js**
 ```javascript
@@ -399,7 +399,7 @@ ngVueComponentsModule.directive('vueAppContainer',
 
 We are using ngVue's `createVueComponent` factory to translate a Vue component into an Angular directive.
 
-As a first step, we inform the main angular module of the existence of our angularized-vue-components, so inside "dev.index.js" replace
+As a first step, we inform the main angular module of the existence of our angularized-vue-components, so inside `dev.index.js` replace
 
 ```javascript
 angular.module('ngVueApp', []);
@@ -502,7 +502,9 @@ Et voilà, it simply works:
 
 ![vue-component-inside-real-app][9]
 
-As a reference, see **"tag-04-vue-component-inside-real-app"**.
+As a reference, see **`tag-04-vue-component-inside-real-app`**.
+
+TEST
 
 
 

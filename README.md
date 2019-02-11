@@ -303,7 +303,8 @@ whose template is so simple as:
 <div class="angular-app-container">{{$ctrl.internalString}}</div>
 ```
 
-And let's use it into our development Angular app:   
+And let's use it into our development Angular app:  
+ 
 **DEV/dev.index.js**
 ```javascript
 // a bunch of useful imports

@@ -166,7 +166,7 @@ First things first
 ----
 Let's start by "emulating" an Angular app to re-create an environment to make quick development iterations before injecting the code into the real app. For sure, this is a contrived example which delineates the way I dealt with my problem: as stated above, in the original Angular app I have got no support from Webpack (or other module bundlers), and ideally I do not want to modify in any way the existing codebase.   
 By bootstrapping a dev environment with modern tools I can instead quickly write and test new Vue code and Angular-Vue interactions through webpack-dev-server.
-Please refer to **"tag-03-bootstrapping-vue-app"** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
+Please refer to **"tag-03-bootstrapping-dev-angular-app"** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
 
 ### Webpack config
 Before we start, a few points to note.   
@@ -304,7 +304,7 @@ whose template is so simple as:
 ```
 
 And let's use it into our development Angular app:  
-
+ 
 **DEV/dev.index.js**
 ```javascript
 // a bunch of useful imports
@@ -332,7 +332,7 @@ Now from you terminal launch
 npm run dev
 ```
 Nice! A simple Angular app on which experiment with our migration.    
-Again, refer to the **"tag-03-bootstrapping-vue-app"** for everything done so far.
+Again, refer to the **"tag-03-bootstrapping-dev-angular-app"** for everything done so far.
 
 
 

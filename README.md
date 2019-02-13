@@ -669,9 +669,9 @@ export class SearchService {
 ```
 
 Our service is a plain javascript class. In the future we will simply import and use it as a ES module in Vue code. For now, we will share it on Angular and Vue instances thanx to [Angular's providers][11] and the [$injector service][12].  
-An angular `service`registers a service constructor, invoked with `new`, to create the service instance. It should be used (guess what) when we define the service as a class.
-`$injector`is an Angular service used to retrieve object instances as defined by a provider. `$injector.get` returns the instance of the service.   
-Exporting an instance of an Angular service allow us to import and use it anywhere.
+An angular `service`registers a service constructor, invoked with `new`, to create the service instance. It should be used (guess what) when we define the service as a class.   
+`$injector` is an Angular service used to retrieve object instances as defined by a provider. `$injector.get` returns the instance of the service.   
+Exporting an instance of an Angular service allow then us to import and use it anywhere.
 
 > "My dear, here we must run as fast as we can, just to stay in place. And if you wish to go anywhere you must run twice as fast as that."
 >
@@ -683,6 +683,7 @@ Add this code to `ngVueComponentsModule.js`:
 ```javascript
 import { SearchService } from '@/ngVueBridgeCode/services/searchService'; 
 ngVueComponentsModule.service('searchService', SearchService);  // #1
+
 export let searchService;
 ngVueComponentsModule.run($injector => {
     searchService = $injector.get('searchService');             // #2
@@ -691,12 +692,12 @@ ngVueComponentsModule.run($injector => {
 and we are done:
 1. we have rewritten the service as a class (previous code snippet)
 2. instantiated it as an Angular service (comment #1)
-3. exported the instance in `searchService` (comment #2).
+3. exported the instance through `searchService` (comment #2).
 
 **A note**: to simplify a little bit, I deleted the `ngVueDirectives.js` file from `ngVueBridge` folder, and move the code there directly into `ngVueComponentsModule` (remove also the import inside `vueApp/src/index.js` e `vueApp/src/DEV/dev.index.js`). Refer to the codebase in **`tag-05-vue-globals`**.
 
 Thanx to point 2 above you can safely delete `angularApp/services/searchService.js` (and the script tag inside `index.html`). You can leave the existing Angular code untouched, and everything will keep working (remember to `npm run build`).    
-Move on and migrate also "detail" and "searchResults" components. Here, we can barely mimic th existing code with little effort.
+Move on and migrate also "detail" and "searchResults" components. Here, we can barely mimic the existing code with little effort.
 
 **vueCode/components/SearchResults/index.vue**
 ```html

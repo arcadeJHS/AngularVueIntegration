@@ -9,33 +9,3 @@ h1, p {
 	padding: 1em 0;
 	border-bottom: 1px solid #ccc;
 }
-
-.app-SearchResults {
-	float: left;
-    border-right: 1px solid #ccc;
-	width: 12em;
-}
-.app-SearchResults .app-SearchResults__list {
-	padding-top: 1em;
-}
-.app-SearchResults .app-SearchResults__list ul {
-	list-style: none;
-	padding: 0;
-}
-.app-SearchResults .app-SearchResults__list ul li:hover {
-	cursor: pointer;
-	text-decoration: underline;
-	color: blue;
-}
-
-.app-Detail {
-	padding: 1em 1em 1em 14em;
-}
-.app-Detail dl dt {
-	float: left;
-	width: 100px;
-}
-
-.app-InnerDetail {
-	margin-top: 2em;
-}

@@ -13,22 +13,14 @@
 		<header>
 			<search></search>
 		</header>
-		<main>
-			<search-results></search-results>
-			<detail></detail>
-			
-			<!-- ngVue components -->
-			<vue-app-container some-param="'Hello from Angular parent!'"></vue-app-container>
-		</main>
+
+		<vue-app-container></vue-app-container>
 	</div>
 
 	<script src="vendor/angular.min.js"></script>
 	<script src="angularApp/angularApp.js"></script>
-	<script src="angularApp/services/searchService.js"></script>
 	<script src="angularApp/components/search.js"></script>
-	<script src="angularApp/components/searchResults.js"></script>
 	<script src="angularApp/components/innerDetail.js"></script>
-	<script src="angularApp/components/detail.js"></script>
 
 	<!-- ngVue components -->
 	<link href="vueApp/dist/css/appVueLib.css" rel="stylesheet" type="text/css">

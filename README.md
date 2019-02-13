@@ -66,6 +66,8 @@ Ideally you will migrate everything to Vue, but you cannot stop implementing new
 > "Said, woman, take it slow  
 > It'll work itself out fine  
 > ll we need is just a little patience."
+>
+> <cite>(Guns N' Roses)</cite>
 
 In the end, for reasons I will not expose here (related to an old architecture and refactoring decisions), what we are going to do, at least as a firs step, could be summarized as:
 
@@ -107,10 +109,14 @@ A lot to do, so many things to understand and to fit into each other.
 > "Me and my brother Vue here,  
 > We was hitchhikin' down a long and lonesome road.  
 > All of a sudden, there shined a shiny demon."
+>
+> <cite>(Tenacious D - kinda of)</cite>
 
 [ngVue][4] enters here.
 
 > "ngVue is an Angular module that allows you to develop/use Vue components in AngularJS applications."
+>
+> <cite>([ngVue repo][4])</cite>
 
 Cool: I am a really bad swimmer, but at least a bridge exists. I can write a Vue component and include it into the existing Angular application. That's a good start.   
 Angular, Vue, ngVue (and Webpack). The Three Musketeers! 
@@ -358,15 +364,15 @@ Let's define a component for a simple app navigation. Note I am using the `vueCo
 **vueCode/components/VueAppContainer.vue**
 ```html
 <template>
-	<div class="vue-app-container">
-		<nav>Navigation Container</nav>
-		<main>Main Container</main>
-	</div>
+    <div class="vue-app-container">
+        <nav>Navigation Container</nav>
+        <main>Main Container</main>
+    </div>
 </template>
 
 <script>
 export default {
-	name: 'VueAppContainer'
+    name: 'VueAppContainer'
 };
 </script>
 ```
@@ -376,9 +382,8 @@ Now, if you simply include this new Vue component inside the AngularAppContainer
 **DEV/AngularAppContainer/index.html**
 ```html
 <div class="angular-app-container">
-	{{$ctrl.internalString}}
-
-	<vue-app-container></vue-app-container>
+    {{$ctrl.internalString}}
+    <vue-app-container></vue-app-container>
 </div>
 ```
 
@@ -392,8 +397,8 @@ import ngVueComponentsModule from '@/ngVueBridgeCode/ngVueComponentsModule';
 import VueAppContainer from '@/vueCode/components/VueAppContainer';
 
 ngVueComponentsModule.directive('vueAppContainer',
-	/** @ngInject */
-	createVueComponent => createVueComponent(Vue.component('vueAppContainer', VueAppContainer))
+    /** @ngInject */
+    createVueComponent => createVueComponent(Vue.component('vueAppContainer', VueAppContainer))
 );
 ```
 
@@ -418,12 +423,14 @@ et voilà: your first Vue component inside Angular!
 
 ![vue-component-inside-angular][8]
 
-Basically, we have just fulfilled requirements 1 and 5: we can write new components in Vue, include them into the existing Angular application, and use modern development and bundling tools.   
+Basically, we have just fulfilled requirements #1 and #5: we can write new components in Vue, include them into the existing Angular application, and use modern development and bundling tools.   
 
 
 Back to the real
 ----
 > "Where we're going, we don't need roads."
+>
+><cite>(Dr. Emmett Brown, Back to the Future)</cite>
 
 But, to say it all, we have to leave our safe development environment, take off, and use the new component inside the real application.   
 
@@ -530,6 +537,288 @@ export default {
 ```
 
 > "You still don't understand what you're dealing with, do you? Perfect organism. Its structural perfection is matched only by its hostility."
+>
+><cite>(Ash, Alien)</cite>
+
+
+A simple client routing: Vue global plugins
+----
+One of the reasons we started this journey was to replace the master-detail component in the Angular application. So far we have seen how easy is to use a Vue component inside Angular. Let's now introduce a little bit of client routing through the `vue-router` module. This will give us the opportunity to use the `$ngVue` factory from `ngVue.plugins`, and analyze how to define [root Vue instance properties][10].
+
+Let's start by defining a simple router file.
+
+**vueCode/router.js**
+```javascript
+import Vue from 'vue';
+import Router from 'vue-router';
+import Detail from './components/Detail/index.vue';
+
+Vue.use(Router);
+
+export const router = new Router({
+    routes: [
+        {
+            path: '*',
+            redirect: '/'
+        },
+        {
+            path: '/:itemId?',
+            name: 'detail',
+            component: Detail
+        }
+    ]
+});
+
+```
+
+`vueCode/components/Detail/index.vue` is a simple replacement for the existing detail view.
+
+Then, in the container, empty the `main` tag and append a `router-view` component:
+
+**vueCode/components/VuaAppContainer.vue**
+```html
+...
+
+<main>
+    <router-view></router-view>
+</main>
+
+...
+```
+
+Usually, in a Vue application, you would pass the store as a property to the root Vue instance. Something like:
+
+```javascript
+import store from './store';
+new Vue({
+    el: '#app',
+    store,
+    render: h => h('<div/>')
+});
+```
+
+But here, in the context of Angular/ngVue this will not work. We have to use `$ngVueProvider` at the configuration phase of Angular module to inject the property.   
+Again, I will configure it in the `ngVueComponentsModule`, because there lives everything related to ngVue.
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+...
+import { router } from '@/vueCode/router';
+
+...
+ngVueComponentsModule.config(($ngVueProvider) => {
+    $ngVueProvider.setRootVueInstanceProps({ router: router });
+});
+```
+
+`vue-router` is now enabled, and you can access it on any child component: we have just fulfilled requirement #4.
+
+> What most people don't understand is that UFOs are on a cosmic tourist route. That's why they're always seen in Arizona, Scotland, and New Mexico. Another thing to consider is that all three of those destinations are good places to play golf. So there's possibly some connection between aliens and golf.
+>
+><cite>(Alice Cooper)</cite>
+
+
+Sharing factories
+----
+Actually we still lack one piece: router links. To add them we will refactor our code a little bit. Even though we will soon replace it with something Vuex, refactoring routing give us the opportunity to rewrite the existing `searchService.js`, and transform it in something both Angular and Vue can consume (and this could be useful in many situations).   
+
+Let's start by rewriting it in ES6 into the `ngVueBridgeCode/services`, to transform it into something "less Angular".
+
+**ngVueBridgeCode/services/searchService.js**
+```javascript
+export class SearchService {
+    /** @ngInject */
+    constructor($timeout) {
+        this.$timeout = $timeout;
+        this.store = {
+            searching: false,
+            searchParam: '',
+            searchResults: [],
+            currentDetail: null
+        };
+    }
+
+    executeQuery (searchParam) {
+        return this.$timeout(function () {
+            // mock data
+            return [
+                // mock data here
+            ];
+        }, 2000);
+    }
+
+    resolveQuery(results) {
+        this.store.searchResults = results;
+        this.store.searching = false;
+    }
+
+    selectItem (id) {
+        this.store.currentDetail = this.store.searchResults.find(function (r) {
+            return r.id === id;
+        });
+    }
+
+    query (searchParam) {
+        this.store.searching = true;
+        this.store.searchParam = searchParam;
+        this.store.searchResults = [];
+        this.store.currentDetail = null;
+        return this.executeQuery(searchParam).then(this.resolveQuery.bind(this));
+    }
+};
+```
+
+Our service is a plain javascript class. In the future we will simply import and use it as a ES module in Vue code. For now, we will share it on Angular and Vue instances thanx to [Angular's providers][11] and the [$injector service][12].  
+An angular `service`registers a service constructor, invoked with `new`, to create the service instance. It should be used (guess what) when we define the service as a class.
+`$injector`is an Angular service used to retrieve object instances as defined by a provider. `$injector.get` returns the instance of the service.   
+Exporting an instance of an Angular service allow us to import and use it anywhere.
+
+> "My dear, here we must run as fast as we can, just to stay in place. And if you wish to go anywhere you must run twice as fast as that."
+>
+><cite>(Alice in Wonderland)</cite>
+
+Add this code to `ngVueComponentsModule.js`:
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+import { SearchService } from '@/ngVueBridgeCode/services/searchService'; 
+ngVueComponentsModule.service('searchService', SearchService);  // #1
+export let searchService;
+ngVueComponentsModule.run($injector => {
+    searchService = $injector.get('searchService');             // #2
+});
+```
+and we are done:
+1. we have rewritten the service as a class (previous code snippet)
+2. instantiated it as an Angular service (comment #1)
+3. exported the instance in `searchService` (comment #2).
+
+**A note**: to simplify a little bit, I deleted the `ngVueDirectives.js` file from `ngVueBridge` folder, and move the code there directly into `ngVueComponentsModule` (remove also the import inside `vueApp/src/index.js` e `vueApp/src/DEV/dev.index.js`). Refer to the codebase in **`tag-05-vue-globals`**.
+
+Thanx to point 2 above you can safely delete `angularApp/services/searchService.js` (and the script tag inside `index.html`). You can leave the existing Angular code untouched, and everything will keep working (remember to `npm run build`).    
+Move on and migrate also "detail" and "searchResults" components. Here, we can barely mimic th existing code with little effort.
+
+**vueCode/components/SearchResults/index.vue**
+```html
+<template>
+    <div class="app-SearchResults">
+        <p v-if="store.searching">Searching...</p>
+        <div v-if="store.searchResults.length && !store.searching">
+            <p>{{store.searchResults.length}} results for: "{{store.searchParam}}"</p>
+            <ul>
+                <li v-for="result in store.searchResults" :key="result.id">
+                    <router-link :to="`/${result.id}`">{{result.name}} ({{result.id}})</router-link>
+                </li>
+            </ul>
+        </div>
+    </div>
+</template>
+
+<script>
+import { searchService } from '@/ngVueBridgeCode/ngVueComponentsModule';
+
+export default {
+    name: "SearchResults",
+    data() {
+        return {
+            store: searchService.store
+        }
+    }
+};
+</script>
+
+<style>
+.app-SearchResults {
+    padding-top: 1em;
+}
+.app-SearchResults ul {
+    list-style: none;
+    padding: 0;
+}
+.app-SearchResults ul li a {
+    text-decoration: none;
+}
+.app-SearchResults ul li:hover {
+    cursor: pointer;
+    text-decoration: underline;
+    color: blue;
+}
+</style>
+```
+
+The HTML template is quite the same (the only difference being the use of a routing system). You can also simply copy and paste the css code from `style.css`.   
+And magic: 
+
+```javascript
+import { searchService } from '@/ngVueBridgeCode/ngVueComponentsModule';
+```
+
+we are importing and using the `searchService` previously instantiated.   
+
+Basically `vueCode/components/Detail/index.vue` works exactly as `SearchResults` (refer to the repo).  
+Complete the refactor simplifying the container:
+
+**vueCode/components/VueAppContainer.vue**
+```html
+<template>
+    <div class="app-VueAppContainer">
+        <nav>
+            <search-results></search-results>
+        </nav>
+        <main>
+            <router-view></router-view>
+        </main>
+    </div>
+</template>
+
+<script>
+import SearchResults from './SearchResults/index.vue';
+
+export default {
+    name: 'VueAppContainer',
+    components: { 
+        SearchResults
+    }
+};
+</script>
+
+<style lang="scss">
+.app-VueAppContainer {
+    nav {
+        float: left;
+        border-right: 1px solid #ccc;
+        width: 12em;
+    }
+}
+</style>
+```
+
+add the component to `index.html`, and rebuild:
+
+**code/index.html**
+```html
+<div id="angular-app-container" ng-app="AngularApp">
+    <header>
+        <search></search>
+    </header>
+
+    <main>
+        <search-results></search-results>
+        <detail></detail>
+    </main>
+
+    <vue-app-container></vue-app-container>
+</div>
+```
+
+We have just doubled (and almost completely migrated) our dear old Angular code:
+
+![angular-vue-duplicate][13]
+
+Starting a search (Angular component) will now activate Vue components. You can safely delete all the related dead Angular code.   
+Cool! We have just migrated to Vue a huge part of our application.   
+For details, refer to **`tag-05-vue-globals`** for the last modifications.
+
 
 
 
@@ -542,3 +831,7 @@ export default {
 [7]: https://github.com/ngVue/ngVue/blob/master/docs/plugins.md
 [8]: screenshots/04-vue_component_inside_angular.png
 [9]: screenshots/05-vue_component_inside_real_app.png
+[10]: https://github.com/ngVue/ngVue/blob/master/docs/plugins.md#Root-Vue-instance-props
+[11]: https://docs.angularjs.org/api/auto/service/$provide#service
+[12]: https://docs.angularjs.org/api/auto/service/$injector
+[13]: screenshots/06-vue_angular_duplicate.png

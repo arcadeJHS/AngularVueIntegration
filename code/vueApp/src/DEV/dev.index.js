@@ -2,9 +2,8 @@ import '@babel/polyfill';
 
 import '@/assets/styles/index.scss';
 import angular from 'angular';
-import AngularAppContainer from './angularAppContainer';
-import '@/ngVueBridgeCode/ngVueDirectives';
 import ngVueComponentsModule from '@/ngVueBridgeCode/ngVueComponentsModule';
+import AngularAppContainer from './angularAppContainer';
 
 angular.module('ngVueApp', [ngVueComponentsModule.name]);
 angular.module('ngVueApp').component('angularAppContainer', AngularAppContainer);

@@ -1,1 +1,1 @@
-body,html{padding:1em}.vue-app-container{margin-top:2em}
+body,html{padding:1em}.app-SearchResults{padding-top:1em}.app-SearchResults ul{list-style:none;padding:0}.app-SearchResults ul li a{text-decoration:none}.app-SearchResults ul li:hover{cursor:pointer;text-decoration:underline;color:#00f}.app-VueAppContainer nav{float:left;border-right:1px solid #ccc;width:12em}.app-Detail{padding:1em 1em 1em 14em}.app-Detail dl dt{float:left;width:100px}

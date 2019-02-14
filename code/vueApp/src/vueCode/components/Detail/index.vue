@@ -1,5 +1,6 @@
 <template>
 	<div class="app-Detail" v-if="currentDetail">
+		<button @click="addResult">Add result</button>
 		<h1>Detail</h1>
 		<dl>
 			<dt>Id:</dt>
@@ -26,6 +27,14 @@ export default {
 		getDetail (detailId) {
 			searchService.selectItem(Number(detailId));
 			this.currentDetail = searchService.store.currentDetail;
+		},
+		addResult () {
+			this.$store.dispatch('addResult', { 
+				id: 4, 
+				name: 'Result Four', 
+				value: `I'm fuzzy on the whole good/bad thing. What do you mean, "bad"?`, 
+				more: "Try to image all life as you know it stopping instantaneously and every molecule in your body exploding at the speed of light." 
+			});
 		}
 	},
 	beforeRouteEnter (to, from, next) {

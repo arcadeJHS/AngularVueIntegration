@@ -1,6 +1,6 @@
 export class SearchService {
 	/** @ngInject */
-	constructor($timeout) {
+	constructor($timeout, VuexStore) {
 		this.$timeout = $timeout;
 		this.store = {
 			searching: false,
@@ -8,17 +8,11 @@ export class SearchService {
 			searchResults: [],
 			currentDetail: null
 		};
+		this.VuexStore = VuexStore;
 	}
 
-	executeQuery (searchParam) {
-		return this.$timeout(function () {
-			// mock data
-			return [
-				{ id: 1, name: 'Result One', value: "We're all mad here. I'm mad. You're mad.", more: "What do you hear? Nothin' but the rain, sir. Grab your gun and bring the cat in." },
-				{ id: 2, name: 'Result Two', value: 'Are you Alive? Yes. Prove it.', more: "Sometimes I've believed as many as six impossible things before breakfast." },
-				{ id: 3, name: 'Result Three', value: 'Do you have any idea why a raven is like a writing desk?', more: "She’s right, Gaius. The end times are approaching. Humanity’s final chapters are about to be written. And you - you will be its author." }
-			];
-		}, 2000);
+	executeQuery(searchParam) {
+		return this.VuexStore.dispatch('getResults', searchParam);
 	}
 
 	resolveQuery(results) {

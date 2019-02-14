@@ -65,7 +65,7 @@ Ideally you will migrate everything to Vue, but you cannot stop implementing new
 
 > "Said, woman, take it slow  
 > It'll work itself out fine  
-> ll we need is just a little patience."
+> All we need is just a little patience."
 >
 > <em>(Guns N' Roses)</em>
 
@@ -110,13 +110,13 @@ A lot to do, so many things to understand and to fit into each other.
 > We was hitchhikin' down a long and lonesome road.  
 > All of a sudden, there shined a shiny demon."
 >
-> <cite>(Tenacious D - kinda of)</cite>
+> <em>(Tenacious D - kinda of)</em>
 
 [ngVue][4] enters here.
 
 > "ngVue is an Angular module that allows you to develop/use Vue components in AngularJS applications."
 >
-> <cite>([ngVue repo][4])</cite>
+> <em>([ngVue repo][4])</em>
 
 Cool: I am a really bad swimmer, but at least a bridge exists. I can write a Vue component and include it into the existing Angular application. That's a good start.   
 Angular, Vue, ngVue (and Webpack). The Three Musketeers! 
@@ -182,11 +182,11 @@ Let's begin with webpack.config.js file.
 ```javascript
 const buildAsALibrary = (env === 'production');
 
-...
-
-entryFile: buildAsALibrary ? 'index.js' : 'DEV/dev.index.js'
-
-...
+const settings = {
+    /* ... */
+    entryFile: buildAsALibrary ? 'index.js' : 'DEV/dev.index.js'
+    /* ... */
+};
 
 if (buildAsALibrary === false) {
     config.plugins.push(new HtmlWebpackPlugin({
@@ -213,31 +213,33 @@ const settings = {
     entryFile: buildAsALibrary ? 'index.js' : 'DEV/dev.index.js'
 };
 
-... 
+const config = {
+    /* ... */
 
-entry: {
-    appVueLib: path.join(__dirname, settings.paths.source, settings.entryFile)
-} 
+    entry: {
+        appVueLib: path.join(__dirname, settings.paths.source, settings.entryFile)
+    } 
 
-...
+    /* ... */
 
-optimization: {
-    splitChunks: {
-        chunks: 'all',
-        maxInitialRequests: Infinity,
-        minSize: 0,
-        cacheGroups: {
-            vendor: {
-                test: /[\\/]node_modules[\\/]/,
-                name: 'appVueLib_VendorsDependencies'
-            },
-            ngVueBridge: {
-                test: /[\\/]src\/ngVueBridgeCode[\\/]/,
-                name: 'appVueLib_NgVueBridge'
-            },
+    optimization: {
+        splitChunks: {
+            chunks: 'all',
+            maxInitialRequests: Infinity,
+            minSize: 0,
+            cacheGroups: {
+                vendor: {
+                    test: /[\\/]node_modules[\\/]/,
+                    name: 'appVueLib_VendorsDependencies'
+                },
+                ngVueBridge: {
+                    test: /[\\/]src\/ngVueBridgeCode[\\/]/,
+                    name: 'appVueLib_NgVueBridge'
+                },
+            }
         }
     }
-}
+};
 ```
 Here we are in essence telling Webpack to generate three files in the final build:
 - **appVueLib_VendorsDependencies.js**: a file to include all vendors dependencies (like, Angular, Vue...).
@@ -430,7 +432,7 @@ Back to the real
 ----
 > "Where we're going, we don't need roads."
 >
-><cite>(Dr. Emmett Brown, Back to the Future)</cite>
+><em>(Dr. Emmett Brown, Back to the Future)</em>
 
 But, to say it all, we have to leave our safe development environment, take off, and use the new component inside the real application.   
 
@@ -538,7 +540,7 @@ export default {
 
 > "You still don't understand what you're dealing with, do you? Perfect organism. Its structural perfection is matched only by its hostility."
 >
-><cite>(Ash, Alien)</cite>
+><em>(Ash, Alien)</em>
 
 
 A simple client routing: Vue global plugins
@@ -577,13 +579,9 @@ Then, in the container, empty the `main` tag and append a `router-view` componen
 
 **vueCode/components/VuaAppContainer.vue**
 ```html
-...
-
 <main>
     <router-view></router-view>
 </main>
-
-...
 ```
 
 Usually, in a Vue application, you would pass the store as a property to the root Vue instance. Something like:
@@ -602,10 +600,8 @@ Again, I will configure it in the `ngVueComponentsModule`, because there lives e
 
 **ngVueBridgeCode/ngVueComponentsModule.js**
 ```javascript
-...
 import { router } from '@/vueCode/router';
 
-...
 ngVueComponentsModule.config(($ngVueProvider) => {
     $ngVueProvider.setRootVueInstanceProps({ router: router });
 });
@@ -615,7 +611,7 @@ ngVueComponentsModule.config(($ngVueProvider) => {
 
 > What most people don't understand is that UFOs are on a cosmic tourist route. That's why they're always seen in Arizona, Scotland, and New Mexico. Another thing to consider is that all three of those destinations are good places to play golf. So there's possibly some connection between aliens and golf.
 >
-><cite>(Alice Cooper)</cite>
+><em>(Alice Cooper)</em>
 
 
 Sharing factories
@@ -675,7 +671,7 @@ Exporting an instance of an Angular service allow then us to import and use it a
 
 > "My dear, here we must run as fast as we can, just to stay in place. And if you wish to go anywhere you must run twice as fast as that."
 >
-><cite>(Alice in Wonderland)</cite>
+><em>(Alice in Wonderland)</em>
 
 Add this code to `ngVueComponentsModule.js`:
 
@@ -818,7 +814,364 @@ We have just doubled (and almost completely migrated) our dear old Angular code:
 
 Starting a search (Angular component) will now activate Vue components. You can safely delete all the related dead Angular code.   
 Cool! We have just migrated to Vue a huge part of our application.   
-For details, refer to **`tag-05-vue-globals`** for the last modifications.
+For details, refer to **`tag-05-vue-globals`**.
+
+
+A centralized store: Vuex
+----
+In some way, we are using the `searchService` as a sort of centralized store to manage all our search and routing needs. We can do better, replacing part of or completely remove it, and introduce [Vuex][15] as a more advanced, performant, and predictable state manager.   
+Let's start by adding a basic store file.
+
+**vueCode/store.js**
+```javascript
+import Vue from 'vue';
+import Vuex from 'vuex';
+
+Vue.use(Vuex);
+
+export default new Vuex.Store({
+    state: {
+        results: []
+    },
+
+    actions: {
+        getResults: (store, searchParam) => {
+            return new Promise((resolve, reject) => {
+                let results = [
+                    { id: 1, name: 'Result One', value: "We're all mad here. I'm mad. You're mad.", more: "What do you hear? Nothin' but the rain, sir. Grab your gun and bring the cat in." },
+                    { id: 2, name: 'Result Two', value: 'Are you Alive? Yes. Prove it.', more: "Sometimes I've believed as many as six impossible things before breakfast." },
+                    { id: 3, name: 'Result Three', value: 'Do you have any idea why a raven is like a writing desk?', more: "She’s right, Gaius. The end times are approaching. Humanity’s final chapters are about to be written. And you - you will be its author." }
+                ];
+
+                setTimeout(() => {
+                    store.commit('setResults', results);
+                    resolve(results);
+                }, 2000);
+            });
+        }
+    },
+
+    mutations: {
+        setResults: (state, results) => {
+            state.results = results;
+        }
+    },
+
+    getters: {
+        resultsCount: state => state.results.length
+    }
+});
+```
+
+> "A journey of a thousand miles must begin with the first step."
+>
+> <em>(Lao Tzu)</em>
+
+One day we will let the store manage everything. Now we only need one single small step (for a man).   
+No, we are not sending our application to the Moon (even though sometimes we would like to). We want to move to the store only the code responsible for retrieving and store search results.
+
+As for vue-router previously, we have to add the store to the global properties.
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+import store from '@/vueCode/store';
+
+ngVueComponentsModule.config(($ngVueProvider) => {
+    $ngVueProvider.setRootVueInstanceProps({ router: router });
+    $ngVueProvider.setRootVueInstanceProps({ store: store });
+});
+```
+
+But, wait a minute: and now what? Angular service and Vuex are separated worlds, how can they communicate?
+
+> "What we've got here is failure to communicate."
+>
+> <em>(The Captain, Cool Hand Luke)</em>
+
+Well, Vuex is simply a JavaScript object that stores data, isn't it?   
+I admit I was stumbling on my way to nowhere for a while, desperately searching for a solution, until I ran into it thanx to the suggestion given by a couple of sentences in [How to embed Vue.js & Vuex inside an AngularJS app... wait what?][16].
+
+> "In Angular, there are providers, which are by far the most confusing aspect of Angular. [...] One of these providers is called a “service”, which can be used to create a single store to reference throughout the app. All it needs is a function that returns an object. With a single line of code, I can return Vuex as an Angular service."
+>
+> <em>(Jonnie Hallman)</em>
+
+Really intriguing! The solution is cripty dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [PROVIDERS][20].      
+The keys here are factory and service providers.
+
+> JavaScript developers often use custom types to write object-oriented code.
+
+Yes, it's me.
+
+> The Factory recipe can create a service of any type, whether it be a primitive, object literal, function, **or even an instance of a custom type**.
+
+For example:
+
+>```javascript 
+> myApp.factory('unicornLauncher', ["apiToken", function(apiToken) {
+>   return new UnicornLauncher(apiToken);
+> }]);
+>```
+  
+Remember? From `store.js` we are exporting `new Vuex.Store()`.   
+And then, all of a sudden: EUREKA! Add a single line of code.
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+ngVueComponentsModule.factory('VuexStore', [() => store]);
+```
+
+Brilliant! We have just exposed our store instance as an Angular service. Thanx Jonnie.   
+To consume it, just inject it into the constructor of `searchService.js`, replace code in `executeQuery`, and use it exactly as you would in Vue:
+
+**ngVueBridgeCode/services/searchService.js**
+```javascript
+/** @ngInject */
+constructor($timeout, VuexStore) {
+    /* ... */
+    this.VuexStore = VuexStore;
+}
+
+executeQuery(searchParam) {
+    return this.VuexStore.dispatch('getResults', searchParam);
+}
+```
+
+Could you see the potential? You can progressively migrate your services.   
+And you can use it also inside your dear plain old Angular components. For example, let's say we would like to add a results counter in the header:
+
+**angularApp/components/search.js**
+```javascript
+template:
+    '<div class="app-Search">' +
+    '   <input type="text" placeholder="search" ng-model="$ctrl.searchInput" />' +
+    '   <button ng-disabled="!$ctrl.searchInput" ng-click="$ctrl.search($ctrl.searchInput)">Search</button>' +
+    '   (results count: {{$ctrl.resultsCount()}})' +
+    '</div>',
+controller: ['searchService', 'VuexStore', function (searchService, VuexStore) {
+    angular.extend(this, {
+        /* ... */
+        resultsCount: function () { 
+            return VuexStore.getters['resultsCount'];
+        },
+        /* ... */
+    });
+}
+```
+
+> **Opinionated tip**: If you inject the service renaming it `$store` you got something very Vue:
+> 
+>```javascript 
+> controller: ['searchService', 'VuexStore', function (searchService, $store) {
+>       $store.dispatch('getResults', searchParam);
+>       return $store.getters['resultsCount'];
+> }
+>```
+
+Sort of simulating a Vue's computed property.   
+But, if you rebuild, launch the application, and start a search... WTF? No count!
+
+![vuex-in-angular-component][21]
+
+As you know, we are crashing here with the misterious world of [**Angular's digest loop**][22]. We are doing something secretly from Angular. We explicitly need to call Angular, and inform it something has changed to trigger the digest. Yes: `$apply` at rescue here.
+
+> "Isn't it unsafe to travel at night?
+> It'll be a lot less safe to stay here...
+> Is there anybody out there?"
+>
+> <em>(Pink Floyd)</em>
+
+**ngVueBridgeCode/utilities/safeApply.js**
+```javascript
+export default function (fn) {
+    var phase = this.$root.$$phase;
+    if (phase == '$apply' || phase == '$digest') {
+        if (fn && (typeof (fn) === 'function')) {
+            fn();
+        }
+    } else {
+        this.$apply(fn);
+    }
+};
+```
+
+I am wrapping the function in a "safe apply" to avoid possible "$apply already in progress" errors.
+But how to use it? One of many possible solutions follows.   
+If you rewrite your component as an ES6 class you can simply import and use it as a module. Here we are still dealing with a classic component, so I a service as a proxy to expose it:
+
+**ngVueBridgeCode/services/utilities.js**
+```javascript
+import SafeApply from '@/ngVueBridgeCode/utilities/SafeApply';
+
+export class Utilities {
+    /** @ngInject */
+    constructor() {
+        this.safeApply = SafeApply;
+    }
+};
+```
+
+and
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+import { Utilities } from '@/ngVueBridgeCode/services/utilities';
+
+ngVueComponentsModule.service('utilities', Utilities);
+```
+
+No need to export anything here, we will not use it inside Vue code.   
+A possible use of that is (also thanx to the fact we are using promises):
+
+**angularApp/components/search.js**
+```javascript
+controller: ['$scope', 'searchService', 'VuexStore', 'utilities', function ($scope, searchService, VuexStore, utilities) {
+    var render = utilities.safeApply.bind($scope);
+
+    angular.extend(this, {
+        /* ... */
+        search: function (searchParam) {
+            searchService.query(searchParam).then(render);
+        },
+        /* ... */
+    });
+}
+```
+
+In pratical terms, we are manually invoking a rendering. We are introducing a maybe unnecessary `$scope`, but that's a small price to pay.
+Now, if you start a search, you will get a working counter.
+
+![safe-apply][23]
+
+There are however situations in which you cannot use this approach, or maybe you want to achieve something more complex, or let Angular and Vue communicate passing data each other. 
+
+As a stupid example, think to a button inside the Vue component responsible to render a selected detail. Clicking the button you add a new item to the results set. I know, a really stupid example, but quite useful in demostrating what I am going to expose.
+
+![event-bus][24]
+
+Start by adding the button in the component template:
+
+**vueCode/components/Detail/index.vue**
+```html
+<template>
+    <div class="app-Detail" v-if="currentDetail">
+        <button @click="addResult">Add result</button>
+        <!-- -->
+    </div>
+</template>
+<script>
+export default {
+    /* ... */
+    methods: {
+        /* ... */
+        addResult () {
+            this.$store.dispatch('addResult', { 
+                id: 4, 
+                name: 'Result Four', 
+                value: `I'm fuzzy on the whole good/bad thing. What do you mean, "bad"?`, 
+                more: "Try to image all life as you know it stopping instantaneously and every molecule in your body exploding at the speed of light." 
+            });
+        }
+    },
+};
+</script>
+```
+
+And the relative action in the store:
+
+**vueCode/store.js**
+```javascript
+export default new Vuex.Store({
+    /* ... */
+    actions: {
+        addResult: (store, result) => { 
+            store.commit('addResult', result);
+        }
+    },
+    mutations: {
+        addResult: (state, result) => {
+            state.results = state.results.concat(result);
+        }
+    },
+    /* ... */
+});
+```
+
+If you test this code now you can easily see that, when you press the button, nothing happens. Actually nothing happens until you wake Angular up: try pressing the "Add result" button and the change the search string in the input, or press the "Search" button again.   
+No black magic here, you are just letting Angular digest the pizza.
+
+There are many possible alternative solutions.  
+For example, while I was studying the problem I came to this smart jQuery solution: [Progressively migrating from AngularJS to Vue.js at Unbabel][14]. There the author suggests, if you are already including it, to use jQuery as a bridge, or, better, as an **event bus**, taking advantage of its `.trigger()` and `.on()` methods, to trigger custom events, and share information between Angular and Vue.   
+Sure, a possibility. But can we replicate that in a cleaner way, where clean means "Vue as much as possible"? After all it would be nice to remove another additional dependency.  
+Well, maybe we can, thanx to the possibility of creating a global event bus in Vue (refer to the official documentation about [state management][19], or [here][17] and [here][18]).
+
+**ngVueBridgeCode/utilities/vueAngularEventBus.js**
+```javascript
+import Vue from 'vue';
+export const VueAngularEventBus = new Vue();
+```
+
+Simple as is.   
+As usual, to use it in Angular wrap the Vue instance returned above into a factory:
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+import { VueAngularEventBus } from '@/ngVueBridgeCode/utilities/VueAngularEventBus.js';
+
+ngVueComponentsModule.factory('VueAngularEventBus', [() => VueAngularEventBus]);
+```
+
+I am placing it into `ngVueBridgeCode` folder because it is just a temporary helper, and ideally it will be removed once the migration is complete. I will simply delete it and all references to `VueAngularEventBus`.
+
+Using it is very simple. Remember: what are going to do is to inform Angular to re-render because something has changed somewhere out there. Namely: when a Vue component updates the store simultaneously the store fires Angular to trigger a new $digest cycle.
+
+Therefore, we need a reference to the bus in the store:
+
+**vueCode/store.js**
+```javascript
+import { VueAngularEventBus } from '@/ngVueBridgeCode/utilities/VueAngularEventBus.js';
+
+export default new Vuex.Store({
+    /* ... */ 
+    mutations: {
+        addResult: (state, result) => {
+            state.results = state.results.concat(result);
+            VueAngularEventBus.$emit('result-added');
+        }
+    }
+    /* ... */
+});
+```
+
+On committing a mutation we will also emit an event through the bus. All the listeners subscribed will react consequently:
+
+**angularApp/components/search.js**
+```javascript
+angular.module('AngularApp').component('search', {
+    template: /* ... */,
+    controller: ['$scope', 'searchService', 'VuexStore', 'utilities', 'VueAngularEventBus', function ($scope, searchService, VuexStore, utilities, VueAngularEventBus) {
+        var render = utilities.safeApply.bind($scope);
+
+        angular.extend(this, {
+            /* ... */
+            $onInit: function () {
+                VueAngularEventBus.$on('result-added', render);
+            },
+            $onDestroy() {
+                VueAngularEventBus.$off('result-added', render);
+            }
+        });
+    }]
+});
+```
+
+The component will render anytime the custom "result-added" event will be triggered. The counter will be now updated everytime you press the "Add result" button. Remember to remove the listener once you destroy the component.
+
+This way can also ship requirement #3.   
+Refer to **`tag-06-using-vuex`** for what we have done so far.
+
+> "See this? This is my boom stick! It's a 12-gauge, double-barreled Remington. S-mart's top of the line. You can find this in the sporting goods department. [...] It's got a walnut stock, cobalt blue steel and a hair trigger."
+>
+> <em>(Ashley J. Williams, Army of Darkness)</em>
 
 
 
@@ -836,3 +1189,14 @@ For details, refer to **`tag-05-vue-globals`** for the last modifications.
 [11]: https://docs.angularjs.org/api/auto/service/$provide#service
 [12]: https://docs.angularjs.org/api/auto/service/$injector
 [13]: screenshots/06-vue_angular_duplicate.png
+[14]: https://medium.com/unbabel/progressively-migrating-from-angularjs-to-vue-js-at-unbabel-581eb4ae022d
+[15]: https://vuex.vuejs.org/
+[16]: https://cushionapp.com/journal/vuejs-inside-angularjs
+[17]: https://alligator.io/vuejs/global-event-bus/
+[18]: http://vuetips.com/global-event-bus
+[19]: https://vuejs.org/v2/guide/state-management.html#Simple-State-Management-from-Scratch
+[20]: https://docs.angularjs.org/guide/providers
+[21]: screenshots/07-vuex_in_angular_component.png
+[22]: https://docs.angularjs.org/guide/scope#scope-life-cycle
+[23]: screenshots/08-safe_apply.png
+[24]: screenshots/09-event_bus.png

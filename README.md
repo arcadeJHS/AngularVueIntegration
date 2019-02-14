@@ -110,7 +110,7 @@ A lot to do, so many things to understand and to fit into each other.
 > We was hitchhikin' down a long and lonesome road.  
 > All of a sudden, there shined a shiny demon."
 >
-> <em>(Tenacious D - kinda of)</em>
+> <em>(Tenacious D)</em>
 
 [ngVue][4] enters here.
 

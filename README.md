@@ -67,7 +67,7 @@ Ideally you will migrate everything to Vue, but you cannot stop implementing new
 > It'll work itself out fine  
 > ll we need is just a little patience."
 >
-> <cite>(Guns N' Roses)</cite>
+> <em>(Guns N' Roses)</em>
 
 In the end, for reasons I will not expose here (related to an old architecture and refactoring decisions), what we are going to do, at least as a firs step, could be summarized as:
 

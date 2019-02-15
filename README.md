@@ -1181,7 +1181,7 @@ Refer to **`tag-06-using-vuex`** for what we have done so far.
 
 Bonus #1: free Angular components from Angular
 ----
-A further step in the migration could be rewriting existing Angular components as ES6 modules. You can move them into your webpack build, you can write them in a more concise style, more Vue than Angular, you are maybe learning ES6+ and want to have fun... whatever. Or maybe you are not interested in any restyling (you already write Angular component that way or you prefer to directly migrate the component to Vue). Either is fine.   
+A further step in the migration could be rewriting existing Angular components as ES6 modules. You can move them into your webpack build, you can write them in a more concise style, you are maybe learning ES6+ and want to have fun... whatever. Or maybe you are not interested in any restyling (you already write Angular component that way or you prefer to directly migrate the component to Vue). Either is fine.   
 Just in case, you can move for example `angularApp/components/search.js` into `vueApp/src/ngVueBridgeCode/components/Search/index.js`, and rewrite it as:
 
 **ngVueBridgeCode/components/Search/index.js**
@@ -1234,7 +1234,9 @@ import Search from '@/ngVueBridgeCode/components/Search/index.js';
 ngVueComponentsModule.component('search', Search);
 ```
 
-And delete all files and code related to the original component. Our Angular app is reducing to its bare bones. See `tag-07-es6-components`.
+And delete all files and code related to the original component. Our Angular app is reducing to its bare bones.   
+See `tag-07-es6-components`.
+
 
 
 

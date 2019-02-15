@@ -895,8 +895,8 @@ I admit I was stumbling on my way to nowhere for a while, desperately searching 
 >
 > <em>(Jonnie Hallman)</em>
 
-Really intriguing! The solution is cripty dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [PROVIDERS][20].      
-The keys here are factory and service providers.
+Really intriguing! The solution is cripty dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [providers][20].      
+The keys here are factory and service recipes.
 
 > JavaScript developers often use custom types to write object-oriented code.
 
@@ -967,7 +967,7 @@ controller: ['searchService', 'VuexStore', function (searchService, VuexStore) {
 > }
 >```
 
-Sort of simulating a Vue's computed property.   
+The `resultsCount`function to me is like simulating a Vue's computed property.   
 But, if you rebuild, launch the application, and start a search... WTF? No count!
 
 ![vuex-in-angular-component][21]
@@ -996,7 +996,7 @@ export default function (fn) {
 
 I am wrapping the function in a "safe apply" to avoid possible "$apply already in progress" errors.
 But how to use it? One of many possible solutions follows.   
-If you rewrite your component as an ES6 class you can simply import and use it as a module. Here we are still dealing with a classic component, so I a service as a proxy to expose it:
+If you rewrite your component as an ES6 class you can simply import and use it as a module. Here we are still dealing with a classic component, so I will write a service as a proxy to expose it:
 
 **ngVueBridgeCode/services/utilities.js**
 ```javascript
@@ -1096,7 +1096,7 @@ export default new Vuex.Store({
 });
 ```
 
-If you test this code now you can easily see that, when you press the button, nothing happens. Actually nothing happens until you wake Angular up: try pressing the "Add result" button and the change the search string in the input, or press the "Search" button again.   
+If you test this code now you can easily see that, when you press the button, nothing happens. Actually nothing happens until you wake Angular up: try pressing the "Add result" button and then change the search string in the input, or press the "Search" button again.   
 No black magic here, you are just letting Angular digest the pizza.
 
 There are many possible alternative solutions.  
@@ -1164,14 +1164,77 @@ angular.module('AngularApp').component('search', {
 });
 ```
 
-The component will render anytime the custom "result-added" event will be triggered. The counter will be now updated everytime you press the "Add result" button. Remember to remove the listener once you destroy the component.
+Which we could represent graphically as:
 
-This way can also ship requirement #3.   
+![event-bus-trigger][25]
+
+The component re-renders anytime the custom "result-added" event is triggered. As a consequence, the counter will be now updated everytime you press the "Add result" button.   
+Remember to remove the listener once you destroy the component.
+
+Completing that we have also shipped requirement #3.   
 Refer to **`tag-06-using-vuex`** for what we have done so far.
 
 > "See this? This is my boom stick! It's a 12-gauge, double-barreled Remington. S-mart's top of the line. You can find this in the sporting goods department. [...] It's got a walnut stock, cobalt blue steel and a hair trigger."
 >
 > <em>(Ashley J. Williams, Army of Darkness)</em>
+
+
+Bonus #1: free Angular components from Angular
+----
+A further step in the migration could be rewriting existing Angular components as ES6 modules. You can move them into your webpack build, you can write them in a more concise style, more Vue than Angular, you are maybe learning ES6+ and want to have fun... whatever. Or maybe you are not interested in any restyling (you already write Angular component that way or you prefer to directly migrate the component to Vue). Either is fine.   
+Just in case, you can move for example `angularApp/components/search.js` into `vueApp/src/ngVueBridgeCode/components/Search/index.js`, and rewrite it as:
+
+**ngVueBridgeCode/components/Search/index.js**
+```javascript
+import template from './index.html';
+import SafeApply from '@/ngVueBridgeCode/utilities/safeApply';
+
+export default {
+    template: template,
+    bindings: {
+        countLabel: '@'
+    },
+    controller: class SearchComponentController {
+        /** @ngInject */
+        constructor($scope, searchService, VuexStore, VueAngularEventBus) {
+            this.scope = $scope;
+            this.searchService = searchService;
+            this.$store = VuexStore;
+            this.VueAngularEventBus = VueAngularEventBus;
+            this.render = SafeApply.bind(this.scope);
+            this.searchInput = '';
+        }
+
+        search (searchParam) {
+            this.searchService.query(searchParam).then(this.render);
+        }
+
+        resultsCount () {
+            return this.$store.getters['resultsCount'];
+        }
+
+        $onInit() {
+            this.VueAngularEventBus.$on('result-added', this.render);
+        }
+
+        $onDestroy() {
+            this.VueAngularEventBus.$off('result-added', this.render);
+        }
+    }
+};
+```
+
+**Note**: to use `SafeApply` we do not need the wrapping utilities service anymore.
+
+Instantiate it as an Angular component:
+
+**ngVueBridgeCode/ngVueComponentsModule.js**
+```javascript
+import Search from '@/ngVueBridgeCode/components/Search/index.js';
+ngVueComponentsModule.component('search', Search);
+```
+
+And delete all files and code related to the original component. Our Angular app is reducing to its bare bones. See `tag-07-es6-components`.
 
 
 
@@ -1200,3 +1263,4 @@ Refer to **`tag-06-using-vuex`** for what we have done so far.
 [22]: https://docs.angularjs.org/guide/scope#scope-life-cycle
 [23]: screenshots/08-safe_apply.png
 [24]: screenshots/09-event_bus.png
+[25]: screenshots/10-event_bus_triggers.png

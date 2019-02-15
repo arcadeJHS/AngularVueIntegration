@@ -8,16 +8,18 @@ import { Utilities } from '@/ngVueBridgeCode/services/utilities';
 import { router } from '@/vueCode/router';
 import store from '@/vueCode/store';
 import { VueAngularEventBus } from '@/ngVueBridgeCode/utilities/VueAngularEventBus.js';
+import Search from '@/ngVueBridgeCode/components/Search/index.js';
 
 
 const ngVueComponentsModule = angular.module('ngVueComponents', ['ngVue', 'ngVue.plugins']);
 
 
-// directives
+// directives and components
 ngVueComponentsModule.directive('vueAppContainer',
 	/** @ngInject */
 	createVueComponent => createVueComponent(Vue.component('vueAppContainer', VueAppContainer))
 );
+ngVueComponentsModule.component('search', Search);
 
 
 // global vue plugins

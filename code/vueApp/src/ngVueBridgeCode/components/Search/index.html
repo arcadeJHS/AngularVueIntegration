@@ -1,0 +1,5 @@
+<div class="app-Search">
+	<input type="text" placeholder="search" ng-model="$ctrl.searchInput" />
+	<button ng-disabled="!$ctrl.searchInput" ng-click="$ctrl.search($ctrl.searchInput)">Search</button>
+	({{$ctrl.countLabel}}: {{$ctrl.resultsCount()}})
+</div>

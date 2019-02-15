@@ -1,8 +1,8 @@
-import SafeApply from '@/ngVueBridgeCode/utilities/SafeApply';
+// import SafeApply from '@/ngVueBridgeCode/utilities/SafeApply';
 
 export class Utilities {
 	/** @ngInject */
 	constructor() {
-		this.safeApply = SafeApply;
+		// this.safeApply = SafeApply;
 	}
 };

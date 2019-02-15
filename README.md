@@ -1,8 +1,4 @@
-**==> Work in progress, stay tuned! <==**
-----
-
-
-# Migrating an Angular 1.x app to Vue
+# Migrating an Angular 1.x app to Vue (it's a long way to the top if you wanna ronck'n'roll)
 > Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
 
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.
@@ -163,7 +159,7 @@ code
     |_index.html
 ```
 
-> **Please note:** here I will not initialize the Vue app through vue-cli. I am reusing a Webpack custom configuration which suites my needs. Nevertheless, everything should work the same way if you are using vue-cli.
+> **Please note**: here I will not initialize the Vue app through vue-cli. I am reusing a Webpack custom configuration which suites my needs. Nevertheless, everything should work the same way if you are using vue-cli.
 
 See tag **`tag-02-app-directory-structure`** (with emtpy folders and files).
 
@@ -1339,6 +1335,157 @@ Sure, you can probably do the same with the `store.searchResults` property. Our 
 Refer to `tag-08-more-store`.
 
 
+Conclusions
+----
+As you have seen, once you grasp a way (I am not claiming here mine is the best or the only one) to let Angular 1.x and Vue cohabit things get easier, and you can resort to a methodology for migrating your codebase progressively. 
+
+> "I belong to the warrior in whom the old ways have joined the new." 
+>
+> <em>(The Last Samurai)</em>
+
+Again, what has been exposed in this article reflects only my opinions, and do not, in any way, constitute the best or only way to achieve the ultimate goal of renewing an old application by completely removing Angular code.
+
+Oh, one more thing...
+
+
+Angular component nested inside Vue component
+----
+Ok, you got me! What about requirement #2? What happened to `inner-detail` once you migrated to `vue-app-container`?  
+I have to be honest here, and admit we must be brave and really creative to solve the last puzzle. 
+
+> "That's my friend, Irishman. And the answer your question is yes - if you fight for me, you get to kill the Angular."
+>
+> <em>(William Wallace, Braveheart)</em>
+
+As confirmed by one of the main repository contributors, ngVue was not designed to allow AngularJS components to be rendered inside Vue components. Someone has tried to solve the problem using `slots`, but, due to rendering differences between the frameworks, the implementation is buggy (and not recommended, because maybe in the future will be deprecated, as stated by [issue #66][27]).   
+After a brief discussion (see [issue #79 on GitHub][26]), thanx to tips coming from all the participants involved (and a previous experience with Angular `injector`), I overcame the problem the way I will tell below.   
+It seems to work, but it also is somehow experimental (I simply lack a deep knowledge on the subject, and I am not completely aware of possible unwanted side effects). Hence I am not sure I would really recommend it.    
+Anyway, to me nesting Angular components inside Vue was an essential requirement; so I report it here to complete the picture, and give a possible solution.
+
+**TL;DR**: I cooked up a Vue component which wraps and compiles an Angular component, and quietly listen for changes in the scope bound.
+
+**ngVueBridgeCode/components/AngularComponent.vue**
+```html
+<template>
+    <div></div>
+</template>
+
+<script>
+import angular from 'angular';
+import SafeApply from '@/ngVueBridgeCode/utilities/safeApply';
+
+let ctrlUnwatch;
+
+export default {
+    name: "AngularComponent",
+    props: ['component'],
+    mounted () {
+        const el = angular.element(this.$el);
+        let scope;
+
+        el.injector().invoke(['$compile', '$rootScope', ($compile, $rootScope) => {         // #1
+            scope = angular.extend($rootScope.$new(), { $ctrl: this.component.$ctrl });     // #2
+            el.replaceWith($compile(this.component.template)(scope));                       // #3
+        }]);
+
+        ctrlUnwatch = this.$watch('component.$ctrl', (ctrl) => {                            // #4
+            scope.$ctrl = angular.merge(scope.$ctrl, ctrl);                                 // #5
+            SafeApply.call(scope);                                                          // #6
+        }, { deep: true });
+    },
+    destroyed () {
+        ctrlUnwatch();                                                                      // #7
+    }
+};
+</script>
+```
+
+A lot of stuff in a few lines.  
+
+**#1**: `injector` is an Angular object that can be used for retrieving services as well as for dependency injection (see the [official documentation][28]). Here we are accessing to it to inject and compile a component on the fly,  after the Angular application has already been bootstrapped.  
+
+**#2**: here we are setting the scope we will bind to the component template, extending a fresh `$scope` with the `$ctrl` object passed by the `component` prop, which basically is an object like this:
+```javascript
+{
+    template: '<some-angular-component some-binding="$ctrl.someBinding"></some-angular-component>',
+    $ctrl: { someBinding: 'foo' }
+}
+```
+
+**#3**: we replace the `<div/>` tag in the Vue template with the compiled Angular component.
+
+**#4**: as already seen previously, we are entangled to Angular $digest loop. To inform Angular something has changed in the object associated to its current scope, update bindings, and re-render, we are introducing a `watcher` on the `component.$ctrl` prop. Note the `{ deep: true }` option, to trigger the watcher in case you have got a complex nested object.
+
+**#5**: any time the prop changes, we update the scope by merging the new object `ctrl` with the existing `scope.$ctrl` - `angular.merge` performs a **deep copy**, which is what we need here to be sure to propagate all the updates.
+
+**#6**: and any time the prop changes, we call our old friend `SafeApply`, bound to an updated scope, to start a `$digest`.
+
+**#7**: `this.$watch` return a function we can use to clear the watcher when the component got destroyed.
+
+Then you simply use the component wherever you want to inject an Angular component:
+
+**vueCode/components/Detail/index.vue**
+```html
+<template>
+    <div class="app-Detail" v-if="currentDetail">
+        <!-- ... -->
+        <angular-component :component="innerDetail"></angular-component>
+    </div>
+</template>
+<script>
+import AngularComponent from '@/ngVueBridgeCode/components/AngularComponent.vue';
+export default {
+	/* ... */
+	components: { 
+		AngularComponent
+	},
+	data () {
+		return {
+			currentDetail: null
+		}
+	},
+	computed: {
+		innerDetail () {
+			return {
+				template: '<inner-detail inner-data="$ctrl.innerData"></inner-detail>',
+				$ctrl: { innerData: this.currentDetail.more }
+			};
+		}
+	},
+	/* ... */
+};
+</script>
+```
+
+`innerDetail` is the `component` prop we have previously introduced. It is better to define it as a computed property to get it correctly initialized.
+
+**Please note**: I have found that in order to have the Angular component completely working, you nee to define its HTML template in a separate file:
+
+```javascript
+templateUrl: 'angularApp/components/innerDetail.html'
+```
+
+Maybe it depends on how and when things are getting parsed and compiled.   
+For instance, if you write:
+
+```javascript
+template: '<div class="app-InnerDetail">{{$ctrl.title}}: <p>{{$ctrl.innerData}}</p></div>'
+```
+
+things will not completely work, and you end up having on screen an unresolved template:
+
+```html
+{{$ctrl.title}}:
+{{$ctrl.innerData}}
+```
+
+If you now rebuild and launch the application you can check the `innerDetail` component is working as expected:
+
+![angular-component-inside-vue][29]
+
+Refer to **`tag-09-angular-component-inside-vue`**.
+
+
 
 [1]: screenshots/01-simple_app.png
 [2]: screenshots/02-app_components.png
@@ -1365,3 +1512,7 @@ Refer to `tag-08-more-store`.
 [23]: screenshots/08-safe_apply.png
 [24]: screenshots/09-event_bus.png
 [25]: screenshots/10-event_bus_triggers.png
+[26]: https://github.com/ngVue/ngVue/issues/79
+[27]: https://github.com/ngVue/ngVue/issues/66
+[28]: https://docs.angularjs.org/api/ng/function/angular.injector
+[29]: screenshots/11-angular_component_inside_vue.png

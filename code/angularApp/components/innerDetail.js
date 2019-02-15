@@ -2,8 +2,7 @@
 	'use strict';
 
 	angular.module('AngularApp').component('innerDetail', {
-		template:
-			'<div class="app-InnerDetail">{{$ctrl.title}}: <p>{{$ctrl.innerData}}</p></div>',
+		templateUrl: 'angularApp/components/innerDetail.html',
 		bindings: {
 			innerData: '<'
 		},

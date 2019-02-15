@@ -10,17 +10,30 @@
 			<dt>Other Field:</dt>
 			<dd>{{currentDetail.value}}</dd>
 		</dl>
+		<angular-component :component="innerDetail"></angular-component>
 	</div>
 </template>
 
 <script>
 import { searchService } from '@/ngVueBridgeCode/ngVueComponentsModule';
+import AngularComponent from '@/ngVueBridgeCode/components/AngularComponent.vue';
 
 export default {
 	name: "Detail",
-	data() {
+	components: { 
+		AngularComponent
+	},
+	data () {
 		return {
 			currentDetail: null
+		}
+	},
+	computed: {
+		innerDetail () {
+			return {
+				template: '<inner-detail inner-data="$ctrl.innerData"></inner-detail>',
+				$ctrl: { innerData: this.currentDetail.more }
+			};
 		}
 	},
 	methods: {

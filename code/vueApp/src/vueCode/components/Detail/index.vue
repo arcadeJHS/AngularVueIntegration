@@ -14,19 +14,16 @@
 </template>
 
 <script>
-import { searchService } from '@/ngVueBridgeCode/ngVueComponentsModule';
-
 export default {
 	name: "Detail",
-	data() {
-		return {
-			currentDetail: null
-		}
-	},
+	computed: {
+    	currentDetail () {
+      		return this.$store.getters['currentDetail'];
+    	}
+  	},
 	methods: {
 		getDetail (detailId) {
-			searchService.selectItem(Number(detailId));
-			this.currentDetail = searchService.store.currentDetail;
+			this.$store.dispatch('selectItem', Number(detailId));
 		},
 		addResult () {
 			this.$store.dispatch('addResult', { 
@@ -38,9 +35,7 @@ export default {
 		}
 	},
 	beforeRouteEnter (to, from, next) {
-		next(component => {
-			component.getDetail(to.params.itemId);
-		});
+		next(component => component.getDetail(to.params.itemId));
 	},
 	beforeRouteUpdate (to, from, next) {
 		this.getDetail(to.params.itemId);

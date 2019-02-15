@@ -1435,24 +1435,24 @@ Then you simply use the component wherever you want to inject an Angular compone
 <script>
 import AngularComponent from '@/ngVueBridgeCode/components/AngularComponent.vue';
 export default {
-	/* ... */
-	components: { 
-		AngularComponent
-	},
-	data () {
-		return {
-			currentDetail: null
-		}
-	},
-	computed: {
-		innerDetail () {
-			return {
-				template: '<inner-detail inner-data="$ctrl.innerData"></inner-detail>',
-				$ctrl: { innerData: this.currentDetail.more }
-			};
-		}
-	},
-	/* ... */
+    /* ... */
+    components: { 
+        AngularComponent
+    },
+    data () {
+        return {
+            currentDetail: null
+        }
+    },
+    computed: {
+        innerDetail () {
+            return {
+                template: '<inner-detail inner-data="$ctrl.innerData"></inner-detail>',
+                $ctrl: { innerData: this.currentDetail.more }
+            };
+        }
+    },
+    /* ... */
 };
 </script>
 ```
@@ -1465,7 +1465,7 @@ export default {
 templateUrl: 'angularApp/components/innerDetail.html'
 ```
 
-Maybe it depends on how and when things are getting parsed and compiled.   
+I guess it depends on how and when things are getting parsed and compiled.   
 For instance, if you write:
 
 ```javascript

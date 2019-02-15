@@ -5,7 +5,8 @@ export class SearchService {
 		this.store = {
 			searching: false,
 			searchParam: '',
-			searchResults: []
+			searchResults: [],
+			currentDetail: null
 		};
 		this.VuexStore = VuexStore;
 	}
@@ -19,10 +20,17 @@ export class SearchService {
 		this.store.searching = false;
 	}
 
+	selectItem (id) {
+		this.store.currentDetail = this.store.searchResults.find(function (r) {
+			return r.id === id;
+		});
+	}
+
 	query (searchParam) {
 		this.store.searching = true;
 		this.store.searchParam = searchParam;
 		this.store.searchResults = [];
+		this.store.currentDetail = null;
 		return this.executeQuery(searchParam).then(this.resolveQuery.bind(this));
 	}
 };

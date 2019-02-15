@@ -6,8 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
-		results: [],
-		selectedDetailId: null
+		results: []
 	},
 
 	actions: {
@@ -20,7 +19,6 @@ export default new Vuex.Store({
 				];
 
 				setTimeout(() => {
-					store.commit('setSelectedDetail', null);
 					store.commit('setResults', results);
 					resolve(results);
 				}, 2000);
@@ -28,9 +26,6 @@ export default new Vuex.Store({
 		},
 		addResult: (store, result) => { 
 			store.commit('addResult', result);
-		},
-		selectItem: (store, id) => { 
-			store.commit('setSelectedDetail', id);
 		}
 	},
 
@@ -41,14 +36,10 @@ export default new Vuex.Store({
 		addResult: (state, result) => {
 			state.results = state.results.concat(result);
 			VueAngularEventBus.$emit('result-added');
-		},
-		setSelectedDetail: (state, id) => { 
-			state.selectedDetailId = id;
 		}
 	},
 
 	getters: {
-		resultsCount: state => state.results.length,
-		currentDetail: state => state.results.find(r => r.id === state.selectedDetailId)
+		resultsCount: state => state.results.length
 	}
 });

@@ -14,7 +14,7 @@ I will not share here the reasons why we choose Vue over alternative frameworks:
 But things change.
 And things can change really fast today at the battlefront of fronted development (loudly playing '70s Battlestar Galactica soundtrack here).
 
-Furthermore, I do not claim to be an expert neither in Angular, nor in Vue (or in javascript, for all that it matters). In what follows I am just exposing what I found to be a possible solution to my specific problem.  
+Furthermore, I do not claim to be an expert neither in Angular, nor in Vue (or in javascript, for all that it matters). In what follows I am just exposing what I found to be a possible solution to a specific problem I had.  
 Maybe it could be helpful to someone else, or maybe someone will address me to a better solution. So here we are.
 
 
@@ -78,13 +78,13 @@ code
 No webpack, transpilation or other module bundling helpers.  
 See the codebase in the **`tag-01-angular-app`** tag of the associated repository.
 
-Ideally you will migrate everything to Vue, but you cannot stop implementing new features while rejuvenating. No chances to unplug the app today to plug it in a year from now completely renewed (it could be dangerous or really time consuming). You have to maintain the legacy code, allowing the beasts to communicate, and migrate it progressively, step by step, with a little patience, as the poet would say:
+Ideally you will migrate everything to Vue, but you cannot stop implementing new features while rejuvenating. No chances to unplug the app today to plug it in a year from now completely renewed (it could be dangerous or really time consuming). You have to maintain the legacy code, allowing the beasts to communicate, deploy often to reiterate on changes done, and migrate it progressively, step by step, with a little patience, as the poet would say:
 
 > "Said, woman, take it slow  
 > It'll work itself out fine  
 > All we need is just a little patience."
 >
-> <em>(Guns N' Roses)</em>
+> *(Guns N' Roses)*
 
 In the end, for reasons I will not expose here (related to an old architecture and refactoring decisions), what we are going to do, at least as a firs step, could be summarized as:
 
@@ -125,13 +125,13 @@ A lot to do, so many things to understand and to fit into each other.
 > We was hitchhikin' down a long and lonesome road.  
 > All of a sudden, there shined a shiny demon."
 >
-> <em>(Tenacious D)</em>
+> *(Tenacious D)*
 
 [ngVue][4] enters here.
 
 > "ngVue is an Angular module that allows you to develop/use Vue components in AngularJS applications."
 >
-> <em>([ngVue repo][4])</em>
+> *([ngVue repo][4])*
 
 Cool: I am a really bad swimmer, but at least a bridge exists. I can write a Vue component and include it into the existing Angular application. That's a good start.   
 Angular, Vue, ngVue (and Webpack). The Three Musketeers! 
@@ -442,7 +442,7 @@ Basically, we have just fulfilled requirements #1 and #5: we can write new compo
 ## Back to the real: linking old and new applications
 > "Where we're going, we don't need roads."
 >
-><em>(Dr. Emmett Brown, Back to the Future)</em>
+> *(Dr. Emmett Brown, Back to the Future)*
 
 But, to say it all, we have to leave our safe development environment, take off, and use the new component inside the real application.   
 
@@ -550,7 +550,7 @@ export default {
 
 > "You still don't understand what you're dealing with, do you? Perfect organism. Its structural perfection is matched only by its hostility."
 >
-><em>(Ash, Alien)</em>
+> *(Ash, Alien)*
 
 
 ## A simple client routing: Vue global plugins
@@ -620,7 +620,7 @@ ngVueComponentsModule.config(($ngVueProvider) => {
 
 > What most people don't understand is that UFOs are on a cosmic tourist route. That's why they're always seen in Arizona, Scotland, and New Mexico. Another thing to consider is that all three of those destinations are good places to play golf. So there's possibly some connection between aliens and golf.
 >
-><em>(Alice Cooper)</em>
+> *(Alice Cooper)*
 
 
 ## Sharing factories: consuming Angular services from Vue
@@ -679,7 +679,7 @@ Exporting an instance of an Angular service allow then us to import and use it a
 
 > "My dear, here we must run as fast as we can, just to stay in place. And if you wish to go anywhere you must run twice as fast as that."
 >
-><em>(Alice in Wonderland)</em>
+> *(Alice in Wonderland)*
 
 Add this code to `ngVueComponentsModule.js`:
 
@@ -872,7 +872,7 @@ export default new Vuex.Store({
 
 > "A journey of a thousand miles must begin with the first step."
 >
-> <em>(Lao Tzu)</em>
+> *(Lao Tzu)*
 
 One day we will let the store manage everything. Now we only need one single small step (for a man).   
 No, we are not sending our application to the Moon (even though sometimes we would like to). We want to move to the store only the code responsible for retrieving and store search results.
@@ -893,14 +893,14 @@ But, wait a minute: and now what? Angular service and Vuex are separated worlds,
 
 > "What we've got here is failure to communicate."
 >
-> <em>(The Captain, Cool Hand Luke)</em>
+> *(The Captain, Cool Hand Luke)*
 
 Well, Vuex is simply a JavaScript object that stores data, isn't it?   
 I admit I was stumbling on my way to nowhere for a while, desperately searching for a solution, until I ran into it thanx to the suggestion given by a couple of sentences in [How to embed Vue.js & Vuex inside an AngularJS app... wait what?][16].
 
 > "In Angular, there are providers, which are by far the most confusing aspect of Angular. [...] One of these providers is called a “service”, which can be used to create a single store to reference throughout the app. All it needs is a function that returns an object. With a single line of code, I can return Vuex as an Angular service."
 >
-> <em>(Jonnie Hallman)</em>
+> *(Jonnie Hallman)*
 
 Really intriguing! The solution is cripty dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [providers][20].      
 The keys here are factory and service recipes.
@@ -985,7 +985,7 @@ As you know, we are crashing here with the misterious world of [**Angular's dige
 > It'll be a lot less safe to stay here...
 > Is there anybody out there?"
 >
-> <em>(Pink Floyd)</em>
+> *(Pink Floyd)*
 
 **ngVueBridgeCode/utilities/safeApply.js**
 ```javascript
@@ -1183,7 +1183,7 @@ Refer to **`tag-06-using-vuex`** for what we have done so far.
 
 > "See this? This is my boom stick! It's a 12-gauge, double-barreled Remington. S-mart's top of the line. You can find this in the sporting goods department. [...] It's got a walnut stock, cobalt blue steel and a hair trigger."
 >
-> <em>(Ashley J. Williams, Army of Darkness)</em>
+> *(Ashley J. Williams, Army of Darkness)*
 
 
 ## Bonus #1: free Angular components from Angular
@@ -1349,7 +1349,7 @@ As you have seen, once you grasp a way (I am not claiming here mine is the best 
 
 > "I belong to the warrior in whom the old ways have joined the new." 
 >
-> <em>(The Last Samurai)</em>
+> *(The Last Samurai)*
 
 Again, what has been exposed in this article reflects only my opinions, and do not, in any way, constitute the best or only way to achieve the ultimate goal of renewing an old application by completely removing Angular code.
 

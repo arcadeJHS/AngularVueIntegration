@@ -255,7 +255,7 @@ const config = {
 };
 ```
 Here we are in essence telling Webpack to generate three files in the final build:
-- **appVueLib_VendorsDependencies.js**: a file to include all vendors dependencies (like, Angular, Vue...).
+- **appVueLib_VendorsDependencies.js**: a file to include all vendors dependencies (like vue, vuex, vue-router...).
 - **appVueLib_NgVueBridge.js**: a bundle which contains the "hybrid" code required to temporary integrate Angular and Vue. Virtually, once the migration is complete, this code could be completely removed, and the generated file simply will exist no more. We will work on this folder later.
 - **appVueLib.js**: the "real porting", the new code completely written in Vue. 
 
@@ -270,7 +270,7 @@ if (env === 'production') {
 }
 ``` 
 The old app already depends on Angular, which is included as an old script tag.  
-Hence, to allow the new bundles to access things defined by other javascript on the page, avoid duplication in the build process, and duplication warnings at runtime, we take advantage of [Webpack externals][5]. The `angular` dependency will be present in the consumer's environment.   
+Hence, to allow the new bundles to access things defined by other javascript on the page, avoid duplication in the build process, and duplication warnings at runtime, we take advantage of [Webpack externals][5]. The `angular` dependency is supposed to be already present in the consumer's environment.   
 Again, we will make use of it later on.
 
 ### package.json

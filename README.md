@@ -1433,6 +1433,16 @@ A lot of stuff in a few lines:
 
 **#7**: `this.$watch` return a function we can use to clear the watcher when the component got destroyed.
 
+Given what the [official documentation for `$apply`][31] says, it is maybe better to rewrite #5 e #6 as:
+
+```javascript
+/* ... */
+ctrlUnwatch = this.$watch('component.$ctrl', (ctrl) => {
+    SafeApply.call(scope, () => { scope.$ctrl = angular.merge(scope.$ctrl, ctrl); });
+}, { deep: true });
+/* ... */
+```
+
 Then you simply use the component wherever you want to inject an Angular component:
 
 **vueCode/components/Detail/index.vue**
@@ -1528,3 +1538,4 @@ Refer to **`tag-09-angular-component-inside-vue`**.
 [28]: https://docs.angularjs.org/api/ng/function/angular.injector
 [29]: screenshots/11-angular_component_inside_vue.png
 [30]: screenshots/12-vue_angular_interaction.png
+[31]: https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply

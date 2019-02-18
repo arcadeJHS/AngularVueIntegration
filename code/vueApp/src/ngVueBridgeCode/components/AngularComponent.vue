@@ -21,8 +21,7 @@ export default {
 		}]);
 
 		ctrlUnwatch = this.$watch('component.$ctrl', (ctrl) => {
-			scope.$ctrl = angular.merge(scope.$ctrl, ctrl);
-			SafeApply.call(scope);
+			SafeApply.call(scope, () => { scope.$ctrl = angular.merge(scope.$ctrl, ctrl); });
 		}, { deep: true });
 	},
 	destroyed () {

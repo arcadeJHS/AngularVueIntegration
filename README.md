@@ -1397,7 +1397,7 @@ export default {
 
         ctrlUnwatch = this.$watch('component.$ctrl', (ctrl) => {                            // #4
             scope.$ctrl = angular.merge(scope.$ctrl, ctrl);                                 // #5
-            SafeApply.call(scope);                                                          // #6
+            SafeApply.call(scope);    // re-render function                                 // #6
         }, { deep: true });
     },
     destroyed () {
@@ -1407,7 +1407,11 @@ export default {
 </script>
 ```
 
-A lot of stuff in a few lines.  
+Which I could roughly visually summarize as:
+
+![vue-angular-interaction][30]
+
+A lot of stuff in a few lines:
 
 **#1**: `injector` is an Angular object that can be used for retrieving services as well as for dependency injection (see the [official documentation][28]). Here we are accessing to it to inject and compile a component on the fly,  after the Angular application has already been bootstrapped.  
 
@@ -1425,7 +1429,7 @@ A lot of stuff in a few lines.
 
 **#5**: any time the prop changes, we update the scope by merging the new object `ctrl` with the existing `scope.$ctrl` - `angular.merge` performs a **deep copy**, which is what we need here to be sure to propagate all the updates.
 
-**#6**: and any time the prop changes, we call our old friend `SafeApply`, bound to an updated scope, to start a `$digest`.
+**#6**: and any time the prop changes, we call our old friend `SafeApply` (which works here as a sort of "render" function), bound to an updated scope, to start a `$digest`.
 
 **#7**: `this.$watch` return a function we can use to clear the watcher when the component got destroyed.
 
@@ -1523,3 +1527,4 @@ Refer to **`tag-09-angular-component-inside-vue`**.
 [27]: https://github.com/ngVue/ngVue/issues/66
 [28]: https://docs.angularjs.org/api/ng/function/angular.injector
 [29]: screenshots/11-angular_component_inside_vue.png
+[30]: screenshots/12-vue_angular_interaction.png

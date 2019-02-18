@@ -9,8 +9,7 @@ Reasons can vary: Angular 1.x will no longer be supported soon; you can indeed w
 So no choiches here, actually, winter's coming: time to migrate.
 
 
-Disclaimer
-----
+## Disclaimer
 I will not share here the reasons why we choose Vue over alternative frameworks: that's not the scope of this writing. I do not want to suggest that Angular is the nuclear winter, and Vue a fresh breeze in a mild Tuscany vineyard.   
 But things change.
 And things can change really fast today at the battlefront of fronted development (loudly playing '70s Battlestar Galactica soundtrack here).
@@ -19,8 +18,30 @@ Furthermore, I do not claim to be an expert neither in Angular, nor in Vue (or i
 Maybe it could be helpful to someone else, or maybe someone will address me to a better solution. So here we are.
 
 
-The Problem
-----
+## Table of Contents
+- [The Problem](#the-problem)
+- [Requirements](#requirements)
+- [So what?](#so-what?)
+- [Enlightening the path](#enlightening-the-path)
+- [First things first: setting up Webpack and NPM dependencies](#first-things-first:-setting-up-webpack-and-npm-dependencies)
+    - [Webpack config](#webpack-config)
+        - [Dev and "library" mode](#dev-and-"library"-mode)
+        - [The production build](#the-production-build)
+        - [Angular as a global object](#angular-as-a-global-object)
+    - [package.json](#package.json)
+    - [A new beginning: setting up a dev app](#a-new-beginning:-setting-up-a-dev-app)
+- [Enters ngVue](#enters-ngvue)
+- [Back to the real: linking old and new applications](#back-to-the-real:-linking-old-and-new-applications)
+- [A simple client routing: Vue global plugins](#a-simple-client-routing:-vue-global-plugins)
+- [Sharing factories: consuming Angular services from Vue](#sharing-factories:-consuming-angular-services-from-vue)
+- [A centralized store: Vuex](#a-centralized-store:-vuex)
+- [Bonus #1: free Angular components from Angular](#bonus-#1:-free-angular-components-from-angular)
+- [Bonus #2: free Vue components from Angular services](#bonus-#2:-free-vue-components-from-angular-services)
+- [Conclusions](#conclusions)
+- [Angular components nested inside Vue components](#angular-components-nested-inside-vue-components)
+
+
+## The Problem
 We've got a huge legacy single-page app, five or six years worth of coding in Angular 1.x, whose layout may be schematically represented as in this picture: 
 
 ![simple-app][1]
@@ -78,8 +99,7 @@ What I am stating is that from an app completely written in Angular 1.x we are m
 I know what you are thinking. But it happens. And (if you are like me) here the fun begins!
 
 
-Requirements
-----
+## Requirements
 We can hence list the main guidelines which will direct the migration:
 
 1. **Support for Vue components inside an Angular app.**   
@@ -98,8 +118,7 @@ We would like to introduce client side routing, to facilitate view switching.
 We will make use of ES6+ javascript and modules, a CSS preprocessor, and will bundle our transpiled code to include it in the existing application. Webpack at rescue here.
 
 
-So what?
-----
+## So what?
 A lot to do, so many things to understand and to fit into each other.
 
 > "Me and my brother Vue here,  
@@ -118,8 +137,7 @@ Cool: I am a really bad swimmer, but at least a bridge exists. I can write a Vue
 Angular, Vue, ngVue (and Webpack). The Three Musketeers! 
 
 
-Enlightening the path
-----
+## Enlightening the path
 The Alien movie teaches us that the best way to generate a new creature is incubating it from the inside.  
 To avoid side effects, I would like to preserve things as they are, as much as possible. I would like to isolate the source code I am going to add, and transpile it in a form I can use into the existing.   
 So i create a nest for Vue in the form of a new folder, let's call it `vueApp`:
@@ -164,8 +182,7 @@ code
 See tag **`tag-02-app-directory-structure`** (with emtpy folders and files).
 
 
-First things first
-----
+## First things first: setting up Webpack and NPM dependencies
 Let's start by "emulating" an Angular app to re-create an environment to make quick development iterations before injecting the code into the real app. For sure, this is a contrived example which delineates the way I dealt with my problem: as stated above, in the original Angular app I have got no support from Webpack (or other module bundlers), and ideally I do not want to modify in any way the existing codebase.   
 By bootstrapping a dev environment with modern tools I can instead quickly write and test new Vue code and Angular-Vue interactions through webpack-dev-server.
 Please refer to **`tag-03-bootstrapping-dev-angular-app`** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
@@ -268,8 +285,7 @@ npm install
 ```
 
 
-A new beginning
-----
+### A new beginning: setting up a dev app
 All the pieces are now in place to begin the real work. Let's start from the `DEV` folder.  
 Create an `AngularAppWrapper` to host our fake Angular app. At the end this will be the structure of the `DEV` folder:
 
@@ -339,8 +355,7 @@ Nice! A simple Angular app on which experiment with our migration.
 Again, refer to the **`tag-03-bootstrapping-dev-angular-app`** for everything done so far.
 
 
-Enters ngVue
-----
+## Enters ngVue
 Let's now create and use our first Vue-inside-Angular component. To do that we will ask for help to ngVue (refer to the [official ngVue documentation][4] for more info).   
 I will begin by defining a new Angular module to contain everything related to ngVue.
 
@@ -424,8 +439,7 @@ et voilà: your first Vue component inside Angular!
 Basically, we have just fulfilled requirements #1 and #5: we can write new components in Vue, include them into the existing Angular application, and use modern development and bundling tools.   
 
 
-Back to the real
-----
+## Back to the real: linking old and new applications
 > "Where we're going, we don't need roads."
 >
 ><em>(Dr. Emmett Brown, Back to the Future)</em>
@@ -539,8 +553,7 @@ export default {
 ><em>(Ash, Alien)</em>
 
 
-A simple client routing: Vue global plugins
-----
+## A simple client routing: Vue global plugins
 One of the reasons we started this journey was to replace the master-detail component in the Angular application. So far we have seen how easy is to use a Vue component inside Angular. Let's now introduce a little bit of client routing through the `vue-router` module. This will give us the opportunity to use the `$ngVue` factory from `ngVue.plugins`, and analyze how to define [root Vue instance properties][10].
 
 Let's start by defining a simple router file.
@@ -610,8 +623,7 @@ ngVueComponentsModule.config(($ngVueProvider) => {
 ><em>(Alice Cooper)</em>
 
 
-Sharing factories
-----
+## Sharing factories: consuming Angular services from Vue
 Actually we still lack one piece: router links. To add them we will refactor our code a little bit. Even though we will soon replace it with something Vuex, refactoring routing give us the opportunity to rewrite the existing `searchService.js`, and transform it in something both Angular and Vue can consume (and this could be useful in many situations).   
 
 Let's start by rewriting it in ES6 into the `ngVueBridgeCode/services`, to transform it into something "less Angular".
@@ -813,8 +825,7 @@ Cool! We have just migrated to Vue a huge part of our application.
 For details, refer to **`tag-05-vue-globals`**.
 
 
-A centralized store: Vuex
-----
+## A centralized store: Vuex
 In some way, we are using the `searchService` as a sort of centralized store to manage all our search and routing needs. We can do better, replacing part of or completely remove it, and introduce [Vuex][15] as a more advanced, performant, and predictable state manager.   
 Let's start by adding a basic store file.
 
@@ -1175,8 +1186,7 @@ Refer to **`tag-06-using-vuex`** for what we have done so far.
 > <em>(Ashley J. Williams, Army of Darkness)</em>
 
 
-Bonus #1: free Angular components from Angular
-----
+## Bonus #1: free Angular components from Angular
 A further step in the migration could be rewriting existing Angular components as ES6 modules. You can move them into your webpack build, you can write them in a more concise style, you are maybe learning ES6+ and want to have fun... whatever. Or maybe you are not interested in any restyling (you already write Angular component that way or you prefer to directly migrate the component to Vue). Either is fine.   
 Just in case, you can move for example `angularApp/components/search.js` into `vueApp/src/ngVueBridgeCode/components/Search/index.js`, and rewrite it as:
 
@@ -1234,8 +1244,7 @@ And delete all files and code related to the original component. Our Angular app
 See `tag-07-es6-components`.
 
 
-Bonus #2: free Vue components from Angular services
-----
+## Bonus #2: free Vue components from Angular services
 Now we have got a store we can move on and strip `searchService` of unnecessary parts.   
 For example, the `store.currentDetail` property and the `selectItem(id)` method are exclusively used by the `detail` Vue component. Let's move them from the Angular service to the Vuex store.   
 
@@ -1335,8 +1344,7 @@ Sure, you can probably do the same with the `store.searchResults` property. Our 
 Refer to `tag-08-more-store`.
 
 
-Conclusions
-----
+## Conclusions
 As you have seen, once you grasp a way (I am not claiming here mine is the best or the only one) to let Angular 1.x and Vue cohabit things get easier, and you can resort to a methodology for migrating your codebase progressively. 
 
 > "I belong to the warrior in whom the old ways have joined the new." 
@@ -1348,8 +1356,7 @@ Again, what has been exposed in this article reflects only my opinions, and do n
 Oh, one more thing...
 
 
-Angular component nested inside Vue component
-----
+## Angular components nested inside Vue components
 Ok, you got me! What about requirement #2? What happened to `inner-detail` once you migrated to `vue-app-container`?  
 I have to be honest here, and admit we must be brave and really creative to solve the last puzzle. 
 

@@ -1,4 +1,4 @@
-# Migrating an Angular 1.x app to Vue 2.x (it's a long way to the top if you wanna ronck'n'roll)
+# Migrating an Angular 1.x app to Vue 2.x (it's a long way to the top if you wanna rock'n'roll)
 > Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
 
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.
@@ -401,7 +401,7 @@ Now, if you simply include this new Vue component inside the AngularAppContainer
 ```
 
 You have to tell Angular to render this component through ngVue.   
-Let's create a file to "transform" Vue component into Angular ones. With, `ngVueDirectives.js` we are telling Angular, through ngVue, that our Vue components exist. Again, `ngVueDirectives.js` is only a temporary bridge file, so we will put it inside `ngVueBridgeCode` folder.
+Let's create a file to "transform" Vue components into Angular ones. With, `ngVueDirectives.js` we are telling Angular, through ngVue, that our Vue components exist. Again, `ngVueDirectives.js` is only a temporary bridge file, so we will put it inside `ngVueBridgeCode` folder.
 
 **ngVueBridgeCode/ngVueDirectives.js**
 ```javascript

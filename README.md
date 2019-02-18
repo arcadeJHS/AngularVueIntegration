@@ -21,22 +21,22 @@ Maybe it could be helpful to someone else, or maybe someone will address me to a
 ## Table of Contents
 - [The Problem](#the-problem)
 - [Requirements](#requirements)
-- [So what?](#so-what?)
+- [So what?](#so-what)
 - [Enlightening the path](#enlightening-the-path)
 - [First things first: setting up Webpack and NPM dependencies](#first-things-first-setting-up-webpack-and-npm-dependencies)
     - [Webpack config](#webpack-config)
-        - [Dev and "library" mode](#dev-and-"library"-mode)
+        - [Dev and "library" mode](#dev-and-library-mode)
         - [The production build](#the-production-build)
         - [Angular as a global object](#angular-as-a-global-object)
-    - [package.json](#package.json)
+    - [package.json](#packagejson)
     - [A new beginning: setting up a dev app](#a-new-beginning-setting-up-a-dev-app)
 - [Enters ngVue](#enters-ngvue)
 - [Back to the real: linking old and new applications](#back-to-the-real-linking-old-and-new-applications)
 - [A simple client routing: Vue global plugins](#a-simple-client-routing-vue-global-plugins)
 - [Sharing factories: consuming Angular services from Vue](#sharing-factories-consuming-angular-services-from-vue)
 - [A centralized store: Vuex](#a-centralized-store-vuex)
-- [Bonus #1: free Angular components from Angular](#bonus-#1-free-angular-components-from-angular)
-- [Bonus #2: free Vue components from Angular services](#bonus-#2-free-vue-components-from-angular-services)
+- [Bonus #1: free Angular components from Angular](#bonus-1-free-angular-components-from-angular)
+- [Bonus #2: free Vue components from Angular services](#bonus-2-free-vue-components-from-angular-services)
 - [Conclusions](#conclusions)
 - [Angular components nested inside Vue components](#angular-components-nested-inside-vue-components)
 
@@ -1356,7 +1356,7 @@ Again, what has been exposed in this article reflects only my opinions, and do n
 Oh, one more thing...
 
 
-## Angular components nested inside Vue components
+## Angular components nested inside Vue components
 Ok, you got me! What about requirement #2? What happened to `inner-detail` once you migrated to `vue-app-container`?  
 I have to be honest here, and admit we must be brave and really creative to solve the last puzzle. 
 

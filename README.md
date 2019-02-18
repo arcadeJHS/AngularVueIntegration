@@ -6,7 +6,7 @@ Sometimes you have to say "stop!" and decide it's time to migrate to a warmer an
 Chances are that you are quietly writing code to grow up and fix your shiny-happy-die-hard-godzilla app in Angular 1.x, day by day (with a certain amount of satisfaction, why not?).  
 In the meantime, as Darwin would say (the man, not the OS), javascript species evolve over time. And, not so surprisingly, you wake up one day to discover that you and your creature are slowly fading to black ("I cannot stand this hell I feel..." you know).  
 Reasons can vary: Angular 1.x will no longer be supported soon; you can indeed write a better javascript today; your application can improve in performance and maintainability... you name it.   
-So no choiches here, actually, winter's coming: time to migrate.
+So no choices here, actually, winter's coming: time to migrate.
 
 
 ## Disclaimer
@@ -90,7 +90,7 @@ In the end, for reasons I will not expose here (related to an old architecture a
 
 - keep the Angular app alive;
 - completely rewrite in Vue the component number 2 (the master-detail wrapper) together with its children, components 3 and 4; but...
-- recicle Angular child component number 5 (which is too big, too complex to be refactored for the time being).
+- recycle Angular child component number 5 (which is too big, too complex to be refactored for the time being).
 
 What I am stating is that from an app completely written in Angular 1.x we are moving to this hybrid solution:
 
@@ -151,7 +151,7 @@ code
 ```
 
 Ideally the `vueApp` folder will contain everything related to the migration: Vue code, Vue-Angular temporary hybrid code, Webpack and package.json configurations, node_modules, and the final "production ready dist" byproduct.  
-Furthermore, I want to keep Vue and hybrid code separated, to be able to delete no more useful Angular code in the future. For a similar reason, I create a `DEV` folder also, which contains mockups or everything useful to webpack-dev-server only. Adding a bunch of styles assets we then finally come to a developmnet ready directory structure, which, in the end, will be similar to the following:
+Furthermore, I want to keep Vue and hybrid code separated, to be able to delete no more useful Angular code in the future. For a similar reason, I create a `DEV` folder also, which contains mockups or everything useful to webpack-dev-server only. Adding a bunch of styles assets we then finally come to a development ready directory structure, which, in the end, will be similar to the following:
 
 ```
 code
@@ -179,7 +179,7 @@ code
 
 > **Please note**: here I will not initialize the Vue app through vue-cli. I am reusing a Webpack custom configuration which suites my needs. Nevertheless, everything should work the same way if you are using vue-cli.
 
-See tag **`tag-02-app-directory-structure`** (with emtpy folders and files).
+See tag **`tag-02-app-directory-structure`** (with empty folders and files).
 
 
 ## First things first: setting up Webpack and NPM dependencies
@@ -215,7 +215,7 @@ if (buildAsALibrary === false) {
 }
 ```
 We will initially build our components inside the `DEV` folder, taking advantage of our testing environment. During development hence, the main entry file will be `DEV/dev.index.js`, and the generated javascript will be injected into `index.html` page.   
-When will switch to the real production build, we will build the codebase as a javascript bundle to include in the existing Angular app, exactly as we would include a new library, and the main entrypoint will then be `index.js`.
+When will switch to the real production build, we will build the codebase as a javascript bundle to include in the existing Angular app, exactly as we would include a new library, and the main entry point will then be `index.js`.
 
 #### The production build
 ```javascript
@@ -446,7 +446,7 @@ Basically, we have just fulfilled requirements #1 and #5: we can write new compo
 
 But, to say it all, we have to leave our safe development environment, take off, and use the new component inside the real application.   
 
-Add to `index.js` the dependecies required:
+Add to `index.js` the dependencies required:
 
 **vueApp/src/index.js**
 ```javascript
@@ -673,7 +673,7 @@ export class SearchService {
 ```
 
 Our service is a plain javascript class. In the future we will simply import and use it as a ES module in Vue code. For now, we will share it on Angular and Vue instances thanx to [Angular's providers][11] and the [$injector service][12].  
-An angular `service`registers a service constructor, invoked with `new`, to create the service instance. It should be used (guess what) when we define the service as a class.   
+An angular `service` registers a service constructor, invoked with `new`, to create the service instance. It should be used (guess what) when we define the service as a class.   
 `$injector` is an Angular service used to retrieve object instances as defined by a provider. `$injector.get` returns the instance of the service.   
 Exporting an instance of an Angular service allow then us to import and use it anywhere.
 
@@ -902,7 +902,7 @@ I admit I was stumbling on my way to nowhere for a while, desperately searching 
 >
 > *(Jonnie Hallman)*
 
-Really intriguing! The solution is cripty dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [providers][20].      
+Really intriguing! The solution is criptically dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [providers][20].      
 The keys here are factory and service recipes.
 
 > JavaScript developers often use custom types to write object-oriented code.
@@ -974,12 +974,12 @@ controller: ['searchService', 'VuexStore', function (searchService, VuexStore) {
 > }
 >```
 
-The `resultsCount`function to me is like simulating a Vue's computed property.   
+The `resultsCount` function to me is like simulating a Vue's computed property (ok, just a ton heavier).   
 But, if you rebuild, launch the application, and start a search... WTF? No count!
 
 ![vuex-in-angular-component][21]
 
-As you know, we are crashing here with the misterious world of [**Angular's digest loop**][22]. We are doing something secretly from Angular. We explicitly need to call Angular, and inform it something has changed to trigger the digest. Yes: `$apply` at rescue here.
+As you know, we are crashing here with the mysterious world of [**Angular's digest loop**][22]. We are doing something secretly from Angular. We explicitly need to call Angular, and inform it something has changed to trigger the digest. Yes: `$apply` at rescue here.
 
 > "Isn't it unsafe to travel at night?
 > It'll be a lot less safe to stay here...
@@ -1044,14 +1044,14 @@ controller: ['$scope', 'searchService', 'VuexStore', 'utilities', function ($sco
 }
 ```
 
-In pratical terms, we are manually invoking a rendering. We are introducing a maybe unnecessary `$scope`, but that's a small price to pay.
+In practical terms, we are manually invoking a rendering. We are introducing a maybe unnecessary `$scope`, but that's a small price to pay.
 Now, if you start a search, you will get a working counter.
 
 ![safe-apply][23]
 
 There are however situations in which you cannot use this approach, or maybe you want to achieve something more complex, or let Angular and Vue communicate passing data each other. 
 
-As a stupid example, think to a button inside the Vue component responsible to render a selected detail. Clicking the button you add a new item to the results set. I know, a really stupid example, but quite useful in demostrating what I am going to expose.
+As a stupid example, think to a button inside the Vue component responsible to render a selected detail. Clicking the button you add a new item to the results set. I know, a really stupid example, but quite useful in demonstrating what I am going to expose.
 
 ![event-bus][24]
 
@@ -1129,7 +1129,7 @@ ngVueComponentsModule.factory('VueAngularEventBus', [() => VueAngularEventBus]);
 
 I am placing it into `ngVueBridgeCode` folder because it is just a temporary helper, and ideally it will be removed once the migration is complete. I will simply delete it and all references to `VueAngularEventBus`.
 
-Using it is very simple. Remember: what are going to do is to inform Angular to re-render because something has changed somewhere out there. Namely: when a Vue component updates the store simultaneously the store fires Angular to trigger a new $digest cycle.
+Using it is very simple. Remember: what we are going to do is to inform Angular to re-render because something has changed somewhere out there. Namely: when a Vue component updates the store simultaneously the store fires Angular to trigger a new $digest cycle.
 
 Therefore, we need a reference to the bus in the store:
 
@@ -1175,7 +1175,7 @@ Which we could represent graphically as:
 
 ![event-bus-trigger][25]
 
-The component re-renders anytime the custom "result-added" event is triggered. As a consequence, the counter will be now updated everytime you press the "Add result" button.   
+The component re-renders anytime the custom "result-added" event is triggered. As a consequence, the counter will be now updated every time you press the "Add result" button.   
 Remember to remove the listener once you destroy the component.
 
 Completing that we have also shipped requirement #3.   
@@ -1366,7 +1366,7 @@ I have to be honest here, and admit we must be brave and really creative to solv
 
 As confirmed by one of the main repository contributors, ngVue was not designed to allow AngularJS components to be rendered inside Vue components. Someone has tried to solve the problem using `slots`, but, due to rendering differences between the frameworks, the implementation is buggy (and not recommended, because maybe in the future will be deprecated, as stated by [issue #66][27]).   
 After a brief discussion (see [issue #79 on GitHub][26]), thanx to tips coming from all the participants involved (and a previous experience with Angular `injector`), I overcame the problem the way I will tell below.   
-It seems to work, but it also is somehow experimental (I simply lack a deep knowledge on the subject, and I am not completely aware of possible unwanted side effects). Hence I am not sure I would really recommend it.    
+It seems to work, but it is somehow experimental indeed (I simply lack a deep knowledge on the subject, and I am not completely aware of possible unwanted side effects). Hence I am not sure I would really recommend it.    
 Anyway, to me nesting Angular components inside Vue was an essential requirement; so I report it here to complete the picture, and give a possible solution.
 
 **TL;DR**: I cooked up a Vue component which wraps and compiles an Angular component, and quietly listen for changes in the scope bound.

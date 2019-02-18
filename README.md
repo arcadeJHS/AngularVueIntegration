@@ -1506,6 +1506,11 @@ If you now rebuild and launch the application you can check the `innerDetail` co
 
 Refer to **`tag-09-angular-component-inside-vue`**.
 
+> **K:** I hope you don’t mind me taking the liberty. I was careful not to drag in any dirt.  
+> **Sapper Morton:** I don’t mind the dirt. I do mind unannounced visits.
+>
+> *(Blade Runner 2049)*
+
 
 
 [1]: screenshots/01-simple_app.png

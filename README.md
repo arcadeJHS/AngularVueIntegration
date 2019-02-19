@@ -1,5 +1,5 @@
 # Migrating an Angular 1.x app to Vue 2.x (it's a long way to the top if you wanna rock'n'roll)
-> Github repository: https://github.com/arcadeJHS/AngularVueIntegration.
+> Github repository: https://github.com/arcadeJHS/AngularVueIntegration
 
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.
 

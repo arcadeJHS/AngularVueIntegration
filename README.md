@@ -18,7 +18,7 @@ Furthermore, I do not claim to be an expert neither in Angular, nor in Vue (or i
 Maybe it could be helpful to someone else, or maybe someone will address me to a better solution. So here we are.
 
 
-## Table of Contents
+## Table of contents
 - [The Problem](#the-problem)
 - [Requirements](#requirements)
 - [So what?](#so-what)
@@ -41,7 +41,7 @@ Maybe it could be helpful to someone else, or maybe someone will address me to a
 - [Angular components nested inside Vue components](#angular-components-nested-inside-vue-components)
 
 
-## The Problem
+## The problem
 We've got a huge legacy single-page app, five or six years worth of coding in Angular 1.x, whose layout may be schematically represented as in this picture: 
 
 ![simple-app][1]
@@ -105,7 +105,7 @@ We can hence list the main guidelines which will direct the migration:
 1. **Support for Vue components inside an Angular app.**   
 Aka: Vue components inside Angular components. This gives us the ability to replace Angular bricks with Vue bricks, avoiding our building to collapse.
 
-2. **Support for Angular components inside Vue Components.**  
+2. **Support for Angular components inside Vue components.**  
 Aka: vue inside angular inside vue (doh!). Wait a minute: what? I know, it sounds really strange, but better to reign in Hell than serve in Heaven, right? Well, kind of. As we stated above, we still need to maintain something Angular inside the new Vue codebase. Simply no options here.
 
 3. **Vuex store, seamlessly shared between Angular and Vue.**   

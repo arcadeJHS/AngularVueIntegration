@@ -76,7 +76,7 @@ code
 ```
 
 No webpack, transpilation or other module bundling helpers.  
-See the codebase in the **`tag-01-angular-app`** tag of the associated repository.
+See the codebase in the [**`tag-01-angular-app`**][32] tag of the associated repository.
 
 Ideally you will migrate everything to Vue, but you cannot stop implementing new features while rejuvenating. No chances to unplug the app today to plug it in a year from now completely renewed (it could be dangerous or really time consuming). You have to maintain the legacy code, allowing the beasts to communicate, deploy often to reiterate on changes done, and migrate it progressively, step by step, with a little patience, as the poet would say:
 
@@ -179,17 +179,17 @@ code
 
 > **Please note**: here I will not initialize the Vue app through vue-cli. I am reusing a Webpack custom configuration which suites my needs. Nevertheless, everything should work the same way if you are using vue-cli.
 
-See tag **`tag-02-app-directory-structure`** (with empty folders and files).
+See tag [**`tag-02-app-directory-structure`**][33] (with empty folders and files).
 
 
 ## First things first: setting up Webpack and NPM dependencies
 Let's start by "emulating" an Angular app to re-create an environment to make quick development iterations before injecting the code into the real app. For sure, this is a contrived example which delineates the way I dealt with my problem: as stated above, in the original Angular app I have got no support from Webpack (or other module bundlers), and ideally I do not want to modify in any way the existing codebase.   
 By bootstrapping a dev environment with modern tools I can instead quickly write and test new Vue code and Angular-Vue interactions through webpack-dev-server.
-Please refer to **`tag-03-bootstrapping-dev-angular-app`** for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
+Please refer to [**`tag-03-bootstrapping-dev-angular-app`**][34] for a detailed view of the Webpack config files and NPM dependencies (I am using Webpack 4 here).  
 
 ### Webpack config
 Before we start, a few points to note.   
-Let's begin with webpack.config.js file.
+Let's begin with `webpack.config.js` file.
 
 #### Dev and "library" mode 
 ```javascript
@@ -352,7 +352,7 @@ Now from you terminal launch
 npm run dev
 ```
 Nice! A simple Angular app on which experiment with our migration.    
-Again, refer to the **`tag-03-bootstrapping-dev-angular-app`** for everything done so far.
+Again, refer to the [**`tag-03-bootstrapping-dev-angular-app`**][34] for everything done so far.
 
 
 ## Enters ngVue
@@ -521,7 +521,7 @@ Et voilà, it simply works:
 
 ![vue-component-inside-real-app][9]
 
-As a reference, see **`tag-04-vue-component-inside-real-app`**.
+As a reference, see [**`tag-04-vue-component-inside-real-app`**][35].
 
 If you are curious, yes, you can also pass props:
 
@@ -698,7 +698,7 @@ and we are done:
 2. instantiated it as an Angular service (comment #1)
 3. exported the instance through `searchService` (comment #2).
 
-**A note**: to simplify a little bit, I deleted the `ngVueDirectives.js` file from `ngVueBridge` folder, and move the code there directly into `ngVueComponentsModule` (remove also the import inside `vueApp/src/index.js` e `vueApp/src/DEV/dev.index.js`). Refer to the codebase in **`tag-05-vue-globals`**.
+**A note**: to simplify a little bit, I deleted the `ngVueDirectives.js` file from `ngVueBridge` folder, and move the code there directly into `ngVueComponentsModule` (remove also the import inside `vueApp/src/index.js` e `vueApp/src/DEV/dev.index.js`). Refer to the codebase in [**`tag-05-vue-globals`**][36].
 
 Thanx to point 2 above you can safely delete `angularApp/services/searchService.js` (and the script tag inside `index.html`). You can leave the existing Angular code untouched, and everything will keep working (remember to `npm run build`).    
 Move on and migrate also "detail" and "searchResults" components. Here, we can barely mimic the existing code with little effort.
@@ -822,7 +822,7 @@ We have just doubled (and almost completely migrated) our dear old Angular code:
 
 Starting a search (Angular component) will now activate Vue components. You can safely delete all the related dead Angular code.   
 Cool! We have just migrated to Vue a huge part of our application.   
-For details, refer to **`tag-05-vue-globals`**.
+For details, refer to [**`tag-05-vue-globals`**][36].
 
 
 ## A centralized store: Vuex
@@ -1179,7 +1179,7 @@ The component re-renders anytime the custom "result-added" event is triggered. A
 Remember to remove the listener once you destroy the component.
 
 Completing that we have also shipped requirement #3.   
-Refer to **`tag-06-using-vuex`** for what we have done so far.
+Refer to [**`tag-06-using-vuex`**][37] for what we have done so far.
 
 > "See this? This is my boom stick! It's a 12-gauge, double-barreled Remington. S-mart's top of the line. You can find this in the sporting goods department. [...] It's got a walnut stock, cobalt blue steel and a hair trigger."
 >
@@ -1241,7 +1241,7 @@ ngVueComponentsModule.component('search', Search);
 ```
 
 And delete all files and code related to the original component. Our Angular app is reducing to its bare bones.   
-See `tag-07-es6-components`.
+See [**`tag-07-es6-components`**][38].
 
 
 ## Bonus #2: free Vue components from Angular services
@@ -1341,7 +1341,7 @@ export default {
 ```
 
 Sure, you can probably do the same with the `store.searchResults` property. Our Angular app is reducing to its bare bones.   
-Refer to `tag-08-more-store`.
+Refer to [**`tag-08-more-store`**][39].
 
 
 ## Conclusions
@@ -1504,7 +1504,7 @@ If you now rebuild and launch the application you can check the `innerDetail` co
 
 ![angular-component-inside-vue][29]
 
-Refer to **`tag-09-angular-component-inside-vue`**.
+Refer to [**`tag-09-angular-component-inside-vue`**][40].
 
 > **K:** I hope you don’t mind me taking the liberty. I was careful not to drag in any dirt.  
 > **Sapper Morton:** I don’t mind the dirt. I do mind unannounced visits.
@@ -1544,3 +1544,12 @@ Refer to **`tag-09-angular-component-inside-vue`**.
 [29]: screenshots/11-angular_component_inside_vue.png
 [30]: screenshots/12-vue_angular_interaction.png
 [31]: https://docs.angularjs.org/api/ng/type/$rootScope.Scope#$apply
+[32]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-01-angular-app
+[33]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-02-app-directory-structure
+[34]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-03-bootstrapping-dev-angular-app
+[35]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-04-vue-component-inside-real-app
+[36]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-05-vue-globals
+[37]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-06-using-vuex
+[38]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-07-es6-components
+[39]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-08-more-store
+[40]: https://github.com/arcadeJHS/AngularVueIntegration/tree/tag-09-angular-component-inside-vue

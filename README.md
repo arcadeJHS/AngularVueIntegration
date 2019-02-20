@@ -390,7 +390,7 @@ export default {
 </script>
 ```
 
-Now, if you simply include this new Vue component inside the AngularAppContainer it will be ignored.
+Now, if you simply include this new Vue component inside the `AngularAppContainer` it will be ignored.
 
 **DEV/AngularAppContainer/index.html**
 ```html
@@ -1055,7 +1055,7 @@ As a stupid example, think to a button inside the Vue component responsible to r
 
 ![event-bus][24]
 
-Start by adding the button in the component template:
+Let's start by adding the button in the component template:
 
 **vueCode/components/Detail/index.vue**
 ```html

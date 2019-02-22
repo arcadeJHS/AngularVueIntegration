@@ -1,4 +1,5 @@
-# Migrating an Angular 1.x app to Vue 2.x (it's a long way to the top if you wanna rock'n'roll)
+# Migrating an Angular 1.x app to Vue 2.x <br><br> A ridiculously detailed and opinionated attempt to let Angular and Vue peacefully live together (if you wanna rock'n'roll).
+
 > Github repository: https://github.com/arcadeJHS/AngularVueIntegration
 
 Sometimes you have to say "stop!" and decide it's time to migrate to a warmer and sunnier place.
@@ -586,7 +587,7 @@ export const router = new Router({
 
 Then, in the container, empty the `main` tag and append a `router-view` component:
 
-**vueCode/components/VuaAppContainer.vue**
+**vueCode/components/VueAppContainer.vue**
 ```html
 <main>
     <router-view></router-view>
@@ -695,8 +696,8 @@ ngVueComponentsModule.run($injector => {
 ```
 and we are done:
 1. we have rewritten the service as a class (previous code snippet)
-2. instantiated it as an Angular service (comment #1)
-3. exported the instance through `searchService` (comment #2).
+2. instantiated it as an Angular service (#1)
+3. exported the instance through `searchService` (#2).
 
 **A note**: to simplify a little bit, I deleted the `ngVueDirectives.js` file from `ngVueBridge` folder, and move the code there directly into `ngVueComponentsModule` (remove also the import inside `vueApp/src/index.js` e `vueApp/src/DEV/dev.index.js`). Refer to the codebase in [**`tag-05-vue-globals`**][36].
 
@@ -905,11 +906,11 @@ I admit I was stumbling on my way to nowhere for a while, desperately searching 
 Really intriguing! The solution is criptically dug there (in clear). Read that, and read it again; lucubrate, my little brain; use the Rosetta Stone to decipher Angular's documentation for [providers][20].      
 The keys here are factory and service recipes.
 
-> JavaScript developers often use custom types to write object-oriented code.
+> "JavaScript developers often use custom types to write object-oriented code."
 
 Yes, it's me.
 
-> The Factory recipe can create a service of any type, whether it be a primitive, object literal, function, **or even an instance of a custom type**.
+> "The Factory recipe can create a service of any type, whether it be a primitive, object literal, function, **or even an instance of a custom type**."
 
 For example:
 
@@ -965,7 +966,7 @@ controller: ['searchService', 'VuexStore', function (searchService, VuexStore) {
 }
 ```
 
-> **Opinionated tip**: If you inject the service renaming it `$store` you got something very Vue:
+> **Opinionated tip**: If you inject the service renaming it `$store` you got something very Vue
 > 
 >```javascript 
 > controller: ['searchService', 'VuexStore', function (searchService, $store) {
@@ -1109,7 +1110,7 @@ No black magic here, you are just letting Angular digest the pizza.
 There are many possible alternative solutions.  
 For example, while I was studying the problem I came to this smart jQuery solution: [Progressively migrating from AngularJS to Vue.js at Unbabel][14]. There the author suggests, if you are already including it, to use jQuery as a bridge, or, better, as an **event bus**, taking advantage of its `.trigger()` and `.on()` methods, to trigger custom events, and share information between Angular and Vue.   
 Sure, a possibility. But can we replicate that in a cleaner way, where clean means "Vue as much as possible"? After all it would be nice to remove another additional dependency.  
-Well, maybe we can, thanx to the possibility of creating a global event bus in Vue (refer to the official documentation about [state management][19], or [here][17] and [here][18]).
+Well, maybe we can, thanx to the possibility of creating a global event bus in Vue (refer to the official documentation about [state management][19], or global event bus [here][17] and [here][18]).
 
 **ngVueBridgeCode/utilities/vueAngularEventBus.js**
 ```javascript
